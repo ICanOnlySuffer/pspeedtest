@@ -3,9 +3,6 @@ require_relative "pocha-speed-test/bytes"
 require "httparty"
 
 module PochaSpeedTest
-	VERSION = "0.1.0"
-	
-	
 	module User
 		@@geopoint = GeoPoint.new
 		

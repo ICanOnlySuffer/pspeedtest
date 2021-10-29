@@ -5,7 +5,7 @@ class Numeric
 	end
 end
 
-module SpeedTest
+module PochaSpeedTest
 	GeoPoint = Struct.new :latitude, :longitude do
 		def distance_to latitude, longitude
 			phi_1 = Math.cos self.latitude.radians
