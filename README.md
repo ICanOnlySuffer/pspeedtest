@@ -1,6 +1,6 @@
 # PochaSpeedTest
 
-## Instalation
+## Installation
 
 Add this line to your application's Gemfile:
 
@@ -11,6 +11,10 @@ gem "pocha-speed-test"
 And then excecute:
 
 	$ bundle
+
+Or in the future install it yourself:
+
+	$ gem install pocha-speed-test
 
 ## Usage
 
@@ -27,7 +31,7 @@ result = test.run
 
 ## Development
 
-...
+Stuff here
 
 
 
