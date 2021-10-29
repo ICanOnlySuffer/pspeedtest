@@ -1,6 +1,7 @@
 # PochaSpeedTest
 
 A ruby gem to test internet speed with speedtest.net
+
 Adapted from [petemyron's speedtest](https://github.com/petemyron/speedtest/)
 
 ## Installation
@@ -85,5 +86,6 @@ The gem is available as open source under the terms of the [MIT License](https:/
 # Important links
 
 lacostej's speedtest.rb: [GitHub](https://github.com/lacostej/speedtest.rb)
+
 petemyron's gemmed version: [GitHub](https://github.com/petemyron/speedtest/)
 
