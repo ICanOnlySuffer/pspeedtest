@@ -1,5 +1,6 @@
 require "httparty"
 
+require_relative "pocha-speed-test/test-blocks"
 require_relative "pocha-speed-test/geo-point"
 require_relative "pocha-speed-test/version"
 require_relative "pocha-speed-test/result"

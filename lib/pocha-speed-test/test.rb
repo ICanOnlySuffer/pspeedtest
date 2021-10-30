@@ -1,6 +1,6 @@
 
 module PochaSpeedTest
-	Test = Struct.new :download_runs, :upload_runs, :ping_runs, :block do
+	Test = Struct.new :download_sizes, :upload_sizes, :pings, :block do
 		def run
 			block.call self
 		end
@@ -10,13 +10,13 @@ module PochaSpeedTest
 	end
 	
 	# - Looking much nicer now!
-	def self.new download_runs: nil, upload_runs: nil, pin_runs: nil, &block
-		download_runs ||= [1000, 2000]
-		upload_runs   ||= [4000, 8000]
-		ping_runs     ||= 8
-		block         ||= TestBlocks::DEFAULT
+	def self.new download_sizes: nil, upload_sizes: nil, pings: nil, &block
+		download_sizes ||= [    1_000,     1_500,     2_000,     2_500]
+		upload_sizes   ||= [1_000_000, 1_000_000, 1_000_000, 1_000_000]
+		block          ||= TestBlocks::DEFAULT
+		pings          ||= 4
 		
-		Test.new download_runs, upload_runs, ping_runs, &block
+		Test.new download_sizes, upload_sizes, pings, block
 	end
 end
 	
