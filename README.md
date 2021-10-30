@@ -24,10 +24,12 @@ Or install it yourself as:
 
 Create a new test object with any of the following options
 * download_sizes: (Integer Array)
-	* Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+	* Sizes of the images to download
+	* Only values in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
 	* defaults to [1000, 1500, 2000, 2500]
 * upload_sizes: (Integer Array)
-	* Sizes of the strings to upload, they can be of any sizes
+	* Sizes of the strings to upload
+	* Any values
 	* defaults to [1000000, 1000000, 1000000, 1000000]
 * pings: (Integer)
 	* Times the server will be pinged
@@ -40,12 +42,16 @@ Create a new test object with any of the following options
 require "pocha-speed-test"
 
 test = PochaSpeedTest.new
-=> #<struct PochaSpeedTest::Test download_sizes=[1000, 1500, 2000, 2500], upload_sizes=[1000000, 1000000, 1000000, 1000000], pings=4, block=#<Proc:0x000055d245d3bf68 ~/.local/share/gem/ruby/3.0.0/gems/pocha-speed-test-0.1.3/lib/pocha-speed-test/test-blocks.rb:4>>
+=> #<struct PochaSpeedTest::Test
+	download_sizes=[1000, 1500, 2000, 2500],
+	upload_sizes=[1000000, 1000000, 1000000, 1000000],
+	pings=4,
+	block=#<Proc:0x000055d245d3bf68 ~/.local/share/gem/ruby/3.0.0/gems/pocha-speed-test-0.1.3/lib/pocha-speed-test/test-blocks.rb:4>>
 
 test.run
 ```
 
-With the default block it should output something like this
+With the default block it should output something like this:
 
 ```ruby
 
