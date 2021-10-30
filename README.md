@@ -23,50 +23,45 @@ Or install it yourself as:
 ## Usage
 
 Create a new test object with any of the following options
-* download_runs: Sizes of the images to download, mut be one or more of [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
-* upload_runs: Sizes of the strings to upload, may be of any size
+* download_runs: Sizes of the images to download, must be one or more of [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+* upload_runs: Sizes of the strings to upload, may be of any sizes
 * ping_runs: Times the server will be pinged
+* censor: Censors private data such as your ip, your coords, the server url, its coords and it's distance from you
 * debug: Either true or false, if it's set to true it will print debug information.
 
 ```ruby
 require "pocha-speed-test"
 
-test = PochaSpeedTest::Test.new debug: true,
-	download_runs: [350, 500, 750, 1000, 1500],
-	upload_runs: [350, 500, 750, 1000, 1500],
-	ping_runs: 8
+test = PochaSpeedTest::Test.new ping_runs: 8,
+	download_runs: [500, 1000, 1500, 2000],
+	upload_runs: [500, 1000, 1500, 2000],
+	censor: true,
+	debug: true
 
-result = test.run
+test.run
 ```
 
-If debug is set to true it should print out something like this:
+If :debug and :censor are set to true it should print out something like this:
 
 ```ruby
+
+--- Running test ---
+
 User
-  IP: <your ip>
-  Coords: <latitude>, <longitude>
+  IP: <your-ip>
+  Coords: <your-coords>
 Server
   URL: <url>
-  Coords: <latitude>, <longitude> [<distance>]
-  Latency: 57.33ms
+  Coords: <coords> [<distance>]
+  Latency: 6.55ms
 
 Starting download tests:
-  downloading: <url>/speedtest/random350x350.jpg
-  downloading: <url>/speedtest/random500x500.jpg
-  downloading: <url>/speedtest/random750x750.jpg
-  downloading: <url>/speedtest/random1000x1000.jpg
-  downloading: <url>/speedtest/random1500x1500.jpg
-Took 4.8482 seconds to download 8323469 bytes (5 threads)
-Download: 13.10Mbit/s
+  downloading images from <url>/speedtest/
+Took 9.9204 seconds to download 9894024 bytes (7.61Mbit/s)
 
 Starting upload tests:
-  uploading: <url>/speedtest/upload.php
-  uploading: <url>/speedtest/upload.php
-  uploading: <url>/speedtest/upload.php
-  uploading: <url>/speedtest/upload.php
-  uploading: <url>/speedtest/upload.php
-Took 0.1321 seconds to upload 4140 bytes (5 threads)
-Upload: 244.78Kbit/s
+  uploading strings to <url>/speedtest/upload.php
+Took 0.0770 seconds to download 6016 bytes (610.04Kbit/s)
 ```
 
 ## Development
@@ -85,7 +80,11 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 # Important links
 
-lacostej's speedtest.rb: [GitHub](https://github.com/lacostej/speedtest.rb)
+lacostej's speedtest.rb: [https://github.com/lacostej/speedtest.rb](https://github.com/lacostej/speedtest.rb)
 
-petemyron's gemmed version: [GitHub](https://github.com/petemyron/speedtest/)
+petemyron's gemmed version:
+* [https://github.com/petemyron/speedtest/](https://github.com/petemyron/speedtest/)
+* [https://rubygems.org/gems/plr-speedtest](https://rubygems.org/gems/plr-speedtest)
+
+
 
