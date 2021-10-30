@@ -8,16 +8,12 @@ end
 module PochaSpeedTest
 	GeoPoint = Struct.new :latitude, :longitude do
 		def distance_to latitude, longitude
-			phi_1 = Math.cos self.latitude.radians
-			phi_2 = Math.cos latitude.radians
-			
-			delta_phi = (latitude - self.latitude).radians
-			delta_lambda = (longitude - self.longitude).radians
-			
-			sin_1 = Math.sin delta_phi / 2
-			sin_2 = Math.sin delta_lambda / 2
-			
-			a = sin_1 ** 2 + phi_1 * phi_2 * sin_2 ** 2
+			a = (
+				(Math.sin ((latitude - self.latitude).radians / 2)) ** 2 +
+				(Math.cos self.latitude.radians) *
+				(Math.cos latitude.radians) *
+				(Math.sin ((longitude - self.longitude).radians / 2)) ** 2
+			)
 			
 			12742 * (Math.atan2 (Math.sqrt (a)), (Math.sqrt (1 - a)))
 		end

@@ -1,24 +1,18 @@
 
 class Numeric
-	UNITS = {
-		"bit/s"  => ...1024,
-		"Kbit/s" => ...1048576,
-		"Mbit/s" => ...1073741824
-	}.freeze
-	
 	def bytes
-		size = UNITS.each do |key, range|
-			break key if range.include? self
-		end
+		string, max = {
+			"bit/s"  => 1024,
+			"Kbit/s" => 1048576,
+			"Mbit/s" => 1073741824,
+			"Gbit/s" => 1099511627776
+		}.find {|key, max|
+			max > self
+		}
 		
-		position = UNITS.keys.index size
-		number   = self * 1024 ** -position
-		string   = UNITS.keys[position]
-		
-		"%.2f%s" % [number, string]
+		"%.2f%s" % [self * 1024 / max, string]
 	end
 end
-
 
 
 
