@@ -11,12 +11,16 @@ module PochaSpeedTest
 			SocketError,
 		]
 		
+		def coords
+			"%.4f, %.4f" % geopoint.values
+		end
+		
 		def distance
 			geopoint.distance_to *User.geopoint
 		end
 		
-		def coords
-			"%.4f, %.4f" % geopoint.values
+		def coords_distance
+			"%s [%.2fkm]" % [coords, distance]
 		end
 		
 		def to_s
@@ -37,7 +41,7 @@ module PochaSpeedTest
 			}.sum * 100 / n
 		end
 		
-		def get_download_speed runs: [1000, 2000], printing: false
+		def get_download_speed runs = [1000, 2000]
 			start = Time.now
 			bytes = runs.map {|run|
 				url = "%s/speedtest/random%ix%i.jpg" % [self.url, run, run]
@@ -53,7 +57,7 @@ module PochaSpeedTest
 			Speed.new Time.now - start, bytes
 		end
 		
-		def get_upload_speed runs: [2000, 4000], debug: false
+		def get_upload_speed runs = [2000, 4000]
 			url = "%s/speedtest/upload.php" % self.url
 			
 			strings = runs.map {|run|
@@ -76,7 +80,7 @@ module PochaSpeedTest
 			Speed.new Time.now - start, bytes
 		end	
 		
-		def self.get_best pings: 1
+		def self.get_best pings: 1, max: 10
 			page = HTTParty.get "http://www.speedtest.net/speedtest-servers.php"
 			scan = page.body.scan /url="([^"]*)" lat="([^"]*)" lon="([^"]*)/
 			
@@ -87,7 +91,7 @@ module PochaSpeedTest
 				Server.new url, geopoint if url
 			}.sort_by &:distance
 			
-			servers [0, 10].sort_by {|server|
+			servers [0, max].sort_by {|server|
 				server.latency = server.ping pings
 			}.first
 		end
