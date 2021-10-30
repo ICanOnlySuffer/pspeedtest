@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pocha-speed-test (0.1.1)
+    pocha-speed-test (0.1.2)
       httparty (~> 0.13)
 
 GEM
