@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 	
 	spec.files = Dir.chdir(File.expand_path(__dir__)) do
 		`git ls-files -z`.split("\x0").reject do |f|
-			(f == __FILE__) || f.match(%r{\A(?:(?:test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
+			(f == __FILE__) || f.match(%r{\A(?:(?:spec|features)/|\.(?:git|travis|circleci)|appveyor)})
 		end
 	end
 	
@@ -29,10 +29,4 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "bundler", "~> 2.0"
 	spec.add_development_dependency "rspec", "~> 3.0"
 	spec.add_development_dependency "rake", "~> 10.0"
-	
-	# Uncomment to register a new dependency of your gem
-	# spec.add_dependency "example-gem", "~> 1.0"
-	
-	# For more information and examples about making a new gem, checkout our
-	# guide at: https://bundler.io/guides/creating_gem.html
 end
