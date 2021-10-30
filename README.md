@@ -23,11 +23,11 @@ Or install it yourself as:
 ## Usage
 
 Create a new test object with any of the following options
-* download_runs: Sizes of the images to download, must be one or more of [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
-* upload_runs: Sizes of the strings to upload, may be of any sizes
-* ping_runs: Times the server will be pinged
-* censor: Censors private data such as your ip, your coords, the server url, its coords and it's distance from you
-* debug: Either true or false, if it's set to true it will print debug information.
+* download_runs: (Integer Array) Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+* upload_runs: (Integer Array) Sizes of the strings to upload, can be of any sizes
+* ping_runs: (Integer) Times the server will be pinged
+* censor: (Boolean) If set to true it will censor private data such as your ip, your coords, the server url, the server coords and its distance from you
+* debug: (Boolean), If set to true it will print debug information.
 
 ```ruby
 require "pocha-speed-test"
