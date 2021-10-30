@@ -1,16 +1,19 @@
 
 class Numeric
-	def bytes
+	def bytes decimals: 2
 		string, max = {
-			"bit/s"  => 1024,
-			"Kbit/s" => 1048576,
-			"Mbit/s" => 1073741824,
-			"Gbit/s" => 1099511627776
+			"b"  => 1024,
+			"Kb" => 1048576,
+			"Mb" => 1073741824,
+			"Gb" => 1099511627776
 		}.find {|key, max|
 			max > self
 		}
 		
-		"%.2f%s" % [self * 1024 / max, string]
+		"%.#{decimals}f%s" % [self * 1024 / max, string]
+	end
+	def bps
+		bytes + "ps"
 	end
 end
 
