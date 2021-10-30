@@ -24,17 +24,17 @@ Or install it yourself as:
 
 Create a new test object with any of the following options
 * download_sizes: (Integer Array)
-	Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
-	defaults to [1000, 1500, 2000, 2500]
+	* Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+	* defaults to [1000, 1500, 2000, 2500]
 * upload_sizes: (Integer Array)
-	Sizes of the strings to upload, they can be of any sizes
-	defaults to [1000000, 1000000, 1000000, 1000000]
+	* Sizes of the strings to upload, they can be of any sizes
+	* defaults to [1000000, 1000000, 1000000, 1000000]
 * pings: (Integer)
-	Times the server will be pinged
-	defaults to 4
+	* Times the server will be pinged
+	* defaults to 4
 * &block (Proc)
-	Block to run
-	defaults to PochaSpeedTest::TestBlocks::DEFAULT
+	* Block to run
+	* defaults to PochaSpeedTest::TestBlocks::DEFAULT
 
 ```ruby
 require "pocha-speed-test"
