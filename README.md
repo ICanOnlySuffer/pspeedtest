@@ -23,25 +23,29 @@ Or install it yourself as:
 ## Usage
 
 Create a new test object with any of the following options
-* download_runs: (Integer Array) Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
-* upload_runs: (Integer Array) Sizes of the strings to upload, can be of any sizes
-* ping_runs: (Integer) Times the server will be pinged
-* censor: (Boolean) If set to true it will censor private data such as your ip, your coords, the server url, the server coords and its distance from you
-* debug: (Boolean), If set to true it will print debug information.
+* download_sizes: (Integer Array)
+	Sizes of the images to download, they must be in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+	defaults to [1000, 1500, 2000, 2500]
+* upload_sizes: (Integer Array)
+	Sizes of the strings to upload, they can be of any sizes
+	defaults to [1000000, 1000000, 1000000, 1000000]
+* pings: (Integer)
+	Times the server will be pinged
+	defaults to 4
+* &block (Proc)
+	Block to run
+	defaults to PochaSpeedTest::TestBlocks::DEFAULT
 
 ```ruby
 require "pocha-speed-test"
 
-test = PochaSpeedTest::Test.new ping_runs: 8,
-	download_runs: [500, 1000, 1500, 2000],
-	upload_runs: [500, 1000, 1500, 2000],
-	censor: true,
-	debug: true
+test = PochaSpeedTest.new
+=> #<struct PochaSpeedTest::Test download_sizes=[1000, 1500, 2000, 2500], upload_sizes=[1000000, 1000000, 1000000, 1000000], pings=4, block=#<Proc:0x000055d245d3bf68 ~/.local/share/gem/ruby/3.0.0/gems/pocha-speed-test-0.1.3/lib/pocha-speed-test/test-blocks.rb:4>>
 
 test.run
 ```
 
-If :debug and :censor are set to true it should print out something like this:
+With the default block it should output something like this
 
 ```ruby
 
@@ -49,19 +53,25 @@ If :debug and :censor are set to true it should print out something like this:
 
 User
   IP: <your-ip>
-  Coords: <your-coords>
+  Coords: <your-latitude>, <your-longitude>
 Server
-  URL: <url>
-  Coords: <coords> [<distance>]
-  Latency: 6.55ms
+  URL: <server-url>
+  Coords: <server-latitude>, <server-longitude> [<server-distance>]
+  Latency: 8.23ms
 
 Starting download tests:
-  downloading images from <url>/speedtest/
-Took 9.9204 seconds to download 9894024 bytes (7.61Mbit/s)
+  downloading <server-url>/speedtest/random1000x1000.jpg
+  downloading <server-url>/speedtest/random1500x1500.jpg
+  downloading <server-url>/speedtest/random2000x2000.jpg
+  downloading <server-url>/speedtest/random2500x2500.jpg
+Took 14.7883 seconds to download 26770191 bytes (13.81Mbps)
 
 Starting upload tests:
-  uploading strings to <url>/speedtest/upload.php
-Took 0.0770 seconds to download 6016 bytes (610.04Kbit/s)
+  uploading 976Kb to <server-url>/speedtest/upload.php
+  uploading 976Kb to <server-url>/speedtest/upload.php
+  uploading 976Kb to <server-url>/speedtest/upload.php
+  uploading 976Kb to <server-url>/speedtest/upload.php
+Took 16.5597 seconds to upload 4000032 bytes (1.84Mbps)
 ```
 
 ## Development
