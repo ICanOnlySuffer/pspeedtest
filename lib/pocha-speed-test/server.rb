@@ -1,35 +1,26 @@
 
-module PochaSpeedTest
+class PochaSpeedTest
 	Server = Struct.new :url, :geopoint, :latency do
 		ALPHABET = %w{A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}
-		CONNECTION_ERRORS = [
-			Errno::ENETUNREACH,
-			Errno::ECONNRESET,
-			Net::HTTPNotFound,
-			Timeout::Error,
-			SocketError,
-		]
 		
 		def coords
 			"%.4f, %.4f" % geopoint.values
 		end
+		
 		def distance
 			geopoint.distance_to *User.geopoint
 		end
+		
 		def coords_distance
 			"%s [%.2fkm]" % [coords, distance]
 		end
 		
 		def ping n = 1
-			begin
-				n.times.map {
-					start = Time.now
-					page = HTTParty.get "%s/speedtest/latency.txt" % url
-					Time.now - start
-				}.sum * 100 / n
-			rescue *CONNECTION_ERRORS
-				Float::INFINITY
-			end
+			n.times.map {
+				start = Time.now
+				page = HTTParty.get "%s/speedtest/latency.txt" % url
+				Time.now - start
+			}.sum * 100 / n rescue Float::INFINITY
 		end
 		
 		def get_download_speed sizes = [1000, 2000]
