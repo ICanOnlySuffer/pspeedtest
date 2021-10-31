@@ -2,7 +2,7 @@
 module PochaSpeedTest
 	Test = Struct.new :download_sizes, :upload_sizes, :pings, :block do
 		def run times: 1
-			(0 .. times).each do
+			(1 .. times).each do
 				block.call self
 			end
 		end
