@@ -1,8 +1,10 @@
 
 module PochaSpeedTest
 	Test = Struct.new :download_sizes, :upload_sizes, :pings, :block do
-		def run
-			block.call self
+		def run times: 1
+			(0 .. times).each do
+				block.call self
+			end
 		end
 		def on_run &block
 			self.block = block
