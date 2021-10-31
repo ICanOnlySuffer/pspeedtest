@@ -13,37 +13,29 @@ module PochaSpeedTest
 		def coords
 			"%.4f, %.4f" % geopoint.values
 		end
-		
 		def distance
 			geopoint.distance_to *User.geopoint
 		end
-		
 		def coords_distance
 			"%s [%.2fkm]" % [coords, distance]
 		end
 		
-		def to_s
-			"Server\n  URL: %s\n  Coords: %s\n  Latency: %.2fms" % [
-				url, coords, latency
-			]
-		end
-		
 		def ping n = 1
-			n.times.map {
-				start = Time.now
-				begin
+			begin
+				n.times.map {
+					start = Time.now
 					page = HTTParty.get "%s/speedtest/latency.txt" % url
-				rescue *CONNECTION_ERRORS
-					return Float::INFINITY
-				end
-				Time.now - start
-			}.sum * 100 / n
+					Time.now - start
+				}.sum * 100 / n
+			rescue *CONNECTION_ERRORS
+				Float::INFINITY
+			end
 		end
 		
-		def get_download_speed runs = [1000, 2000]
+		def get_download_speed sizes = [1000, 2000]
 			start = Time.now
-			bytes = runs.map {|run|
-				url = "%s/speedtest/random%ix%i.jpg" % [self.url, run, run]
+			bytes = sizes.map {|size|
+				url = "%s/speedtest/random%ix%i.jpg" % [self.url, size, size]
 				Thread.new {|thread|
 					page = HTTParty.get url
 					Thread.current["downloaded"] = page.body.length
@@ -56,11 +48,11 @@ module PochaSpeedTest
 			Speed.new Time.now - start, bytes
 		end
 		
-		def get_upload_speed runs = [2000, 4000]
+		def get_upload_speed sizes = [2000, 4000]
 			url = "%s/speedtest/upload.php" % self.url
 			
-			strings = runs.map {|run|
-				run.times.map {
+			strings = sizes.map {|size|
+				size.times.map {
 					ALPHABET[rand 26]
 				}.join
 			}
@@ -80,19 +72,27 @@ module PochaSpeedTest
 		end	
 		
 		def self.get_best pings: 1, max: 10
-			page = HTTParty.get "http://www.speedtest.net/speedtest-servers.php"
-			scan = page.body.scan /url="([^"]*)" lat="([^"]*)" lon="([^"]*)/
+			data = (
+				HTTParty.get "http://www.speedtest.net/speedtest-servers.php"
+			).body.scan /url="([^"]*)" lat="([^"]*)" lon="([^"]*)/
 			
-			servers = scan.filter_map {|data|
-				url = data [0][/http:\/\/.+\d+/]
-				geopoint = GeoPoint.new data [1].to_f, data [2].to_f
-				
+			servers = data.filter_map {|url, latitude, longitude|
+				url = url[/http:\/\/.+\d+/]
+				geopoint = GeoPoint.new latitude.to_f, longitude.to_f
 				Server.new url, geopoint if url
 			}.sort_by &:distance
 			
 			servers [0, max].sort_by {|server|
 				server.latency = server.ping pings
 			}.first
+		end
+		
+		def to_best! pings: 1, max: 10
+			best = Server.get_best pings: pings, max: max
+			
+			self.url = best.url
+			self.geopoint = best.geopoint
+			self.latency = best.latency
 		end
 	end
 end
