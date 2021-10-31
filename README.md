@@ -1,8 +1,13 @@
 # PochaSpeedTest
 
-A ruby gem to test internet speed with speedtest.net
+A RubyGem to test internet speed with [speedtest.net](speedtest.net) servers.
 
-Adapted from [petemyron's speedtest](https://github.com/petemyron/speedtest/)
+Adapted from [petemyron's speedtest gem](
+	https://github.com/petemyron/speedtest/)
+which is a gemmed version of [lacostej's speedtest.rb](
+	https://github.com/lacostej/speedtest.rb)
+whose inspiration was [fopina's pyspeedtest](
+	https://github.com/fopina/pyspeedtest)
 
 ## Installation
 
@@ -46,7 +51,7 @@ test = PochaSpeedTest.new
 	download_sizes=[1000, 1500, 2000, 2500],
 	upload_sizes=[1000000, 1000000, 1000000, 1000000],
 	pings=4,
-	block=#<Proc:0x000055d245d3bf68 ~/.local/share/gem/ruby/3.0.0/gems/pocha-speed-test-0.1.3/lib/pocha-speed-test/test-blocks.rb:4>>
+	block=#<Proc:0x000055d245d3bf68 ~/.../pocha-speed-test/test-blocks.rb:4>>
 
 test.run
 ```
@@ -80,11 +85,31 @@ Starting upload tests:
 Took 16.5597 seconds to upload 4000032 bytes (1.84Mbps)
 ```
 
+See more at:
+* [https://www.rubydoc.info/gems/pocha-speed-test](
+	https://www.rubydoc.info/gems/pocha-speed-test)
+
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Install dependencies:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+	$ ./bin/setup
+
+Run tests:
+
+	$ rake spec
+
+Interactive Prompt:
+
+	$ ./bin/console
+
+Install into local machine:
+
+	$ bundle exec rake install
+
+Release a new version:
+
+	$ bundle exec rake release
 
 ## Contributing
 
@@ -92,15 +117,26 @@ Bug reports and pull requests are welcome!
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [MIT License](
+	https://opensource.org/licenses/MIT).
 
-# Important links
+## Important links
 
-lacostej's speedtest.rb: [https://github.com/lacostej/speedtest.rb](https://github.com/lacostej/speedtest.rb)
+petemyron's speedtest gem:
+* [https://github.com/petemyron/speedtest/](
+	https://github.com/petemyron/speedtest/)
+* [https://rubygems.org/gems/plr-speedtest](
+	https://rubygems.org/gems/plr-speedtest)
 
-petemyron's gemmed version:
-* [https://github.com/petemyron/speedtest/](https://github.com/petemyron/speedtest/)
-* [https://rubygems.org/gems/plr-speedtest](https://rubygems.org/gems/plr-speedtest)
+lacostej's speedtest.rb:
+* [https://github.com/lacostej/speedtest.rb](
+	https://github.com/lacostej/speedtest.rb)
+
+fopina's pyspeedtest:
+* [https://github.com/fopina/pyspeedtest](
+	https://github.com/fopina/pyspeedtest)
+
+
 
 
 
