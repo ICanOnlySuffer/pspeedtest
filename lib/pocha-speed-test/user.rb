@@ -25,10 +25,12 @@ class PochaSpeedTest
 			@@ip = ip
 			@@geopoint.latitude = latitude.to_f
 			@@geopoint.longitude = longitude.to_f
+			
+			User
 		end
 		
-		def self.print mode: 0, spacing: "  ", decimals: 4
-			puts case mode
+		def self.to_s mode: 0, spacing: "  ", decimals: 4
+			case mode
 			when 0, :normal
 				"User\n%sIP: %s%sCoords: %.#{decimals}f, %.#{decimals}f" % [
 					spacing, @@ip, spacing, *@@geopoint.values
@@ -38,7 +40,7 @@ class PochaSpeedTest
 					@@ip, @@geopoints.latitude, @@geopoint.longitude
 				]
 			else
-				"Error: printing mode #{mode} for User"
+				"Error: no mode: %s for User.to_s" % mode.inspect
 			end
 		end
 	end
