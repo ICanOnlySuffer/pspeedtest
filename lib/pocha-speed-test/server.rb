@@ -1,5 +1,4 @@
 
-
 module PochaSpeedTest
 	Server = Struct.new :url, :geopoint, :latency do
 		ALPHABET = %w{A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}
@@ -29,7 +28,7 @@ module PochaSpeedTest
 			]
 		end
 		
-		def ping n
+		def ping n = 1
 			n.times.map {
 				start = Time.now
 				begin
