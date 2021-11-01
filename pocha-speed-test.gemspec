@@ -15,13 +15,15 @@ Gem::Specification.new do |spec|
 	spec.required_ruby_version = ">= 2.6.0"
 	
 	spec.files = Dir.chdir(File.expand_path(__dir__)) do
-		`git ls-files -z`.split("\x0").reject do |f|
-			(f == __FILE__) || f.match(%r{\A(?:(?:spec|features)/|\.(?:git|travis|circleci)|appveyor)})
+		(`git ls-files -z`.split "\x0").reject do |file|
+			file.match /pkg|#{__FILE__}/
 		end
 	end
 	
 	spec.bindir        = "exe"
-	spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+	spec.executables   = spec.files.grep /\Aexe\// {|file|
+		File.basename file
+	}
 	spec.require_paths = ["lib"]
 	
 	spec.add_runtime_dependency "httparty", "~> 0.13"
@@ -30,3 +32,11 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "rspec", "~> 3.0"
 	spec.add_development_dependency "rake", "~> 10.0"
 end
+
+
+
+
+
+
+
+
