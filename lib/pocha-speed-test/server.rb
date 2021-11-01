@@ -1,91 +1,118 @@
 
 class PochaSpeedTest
-	Server = Struct.new :url, :geopoint, :latency do
-		ALPHABET = %w{A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}
-		
-		def coords
-			"%.4f, %.4f" % geopoint.values
+	SERVERS_URL = "https://www.speedtest.net/speedtest-servers.php"
+	
+	Server = Struct.new :lat, :lon, :host, :sponsor, :latency do
+		def distance lat = USER.lat, lon = USER.lon
+			a = (
+				(Math.sin ((lat - self.lat) * Math::PI / 360)) ** 2 +
+				(Math.cos self.lat * Math::PI / 180) *
+				(Math.cos lat * Math::PI / 180) *
+				(Math.sin ((lon - self.lon) * Math::PI / 360)) ** 2
+			)
+			
+			12742 * (Math.atan2 (Math.sqrt (a)), (Math.sqrt (1 - a)))
 		end
 		
-		def distance
-			geopoint.distance_to *User.geopoint
+		def to_s mode: :default, decimals: 4, spacing: "  "
+			case mode
+			when :default
+				<<~TEXT % [spacing, host, spacing, lat, lon, distance]
+					%sHost: %s
+					%sCoords: %.#{decimals}f, %.#{decimals}f [%.2fkm]
+				TEXT
+			when :compact
+				<<~TEXT % [host, lat, lon]
+					host: %s, lat: %.#{decimals}f, lon: %.#{decimals}f
+				TEXT
+			else
+				raise "Error: no mode %s for server.to_s" % mode.inspect
+			end
 		end
 		
-		def coords_distance
-			"%s [%.2fkm]" % [coords, distance]
-		end
-		
-		def ping n = 1
-			n.times.map {
+		def ping enumerator = 1.times
+			enumerator.map {
 				start = Time.now
-				page = HTTParty.get "%s/speedtest/latency.txt" % url
+				page = HTTParty.get "http://%s/speedtest/latency.txt" % host
 				Time.now - start
 			}.sum * 100 / n rescue Float::INFINITY
 		end
 		
-		def get_download_speed sizes = [1000, 2000]
-			start = Time.now
-			bytes = sizes.map {|size|
-				url = "%s/speedtest/random%ix%i.jpg" % [self.url, size, size]
-				Thread.new {|thread|
-					page = HTTParty.get url
-					Thread.current["downloaded"] = page.body.length
+		def update! ping: 1.times, max: 10
+			self.lat, self.lon, self.host, self.sponsor, self.latency = *(
+				Server.get_best ping: ping, max: max
+			)
+			self
+		end
+		
+		def download_speed sizes = @@download_sizes, debug: nil, spacing: "  "
+			threads = sizes.map {|size|
+				url = "http://#{host}/speedtest/random#{size}x#{size}.jpg"
+				debug_line = case debug
+				when :default, true
+					spacing + "downloading " + url + ?\n
+				when :censored
+					spacing + "downloading " \
+					"http://<host>/speedtest/random%#{size}x%#{size}.jpg\n"
+				else
+					""
+				end
+				
+				Thread.new {
+					print debug_line
+					(HTTParty.get url).length
 				}
-			}.map {|thread|
-				thread.join
-				thread ["downloaded"]
 			}
 			
+			start = Time.now
+			bytes = (threads.map &:value).sum
 			Speed.new Time.now - start, bytes
 		end
 		
-		def get_upload_speed sizes = [2000, 4000]
-			url = "%s/speedtest/upload.php" % self.url
+		def upload_speed sizes = @@upload_sizes, debug: nil, spacing: "  "
+			url = "http://#{host}/speedtest/upload.php"
 			
-			strings = sizes.map {|size|
-				size.times.map {
-					ALPHABET[rand 26]
-				}.join
+			threads = sizes.map {|size|
+				debug_line = case debug
+					when :default, true
+						spacing + "uploading #{size.bytes decimals: 0} to " \
+						"#{url}\n"
+					when :censored
+						spacing + "uploading " + size.bytes + " to " \
+						"http://<host>/speedtest/upload.php\n"
+					else
+						""
+					end
+				Thread.new {
+					print debug_line
+					(HTTParty.post url, body: ?A * size) [/\d+/].to_i
+				}
 			}
 			
 			start = Time.now
-			bytes = strings.map {|string|
-				Thread.new {|thread|
-					page = HTTParty.post url, body: {"content": string}
-					Thread.current["uploaded"] = (page.body.split ?=) [1].to_i
-				}
-			}.map {|thread|
-				thread.join
-				thread ["uploaded"]
-			}
-			
+			bytes = (threads.map &:value).sum
 			Speed.new Time.now - start, bytes
-		end	
+		end
 		
-		def self.get_best pings: 1, max: 10
-			data = (
-				HTTParty.get "http://www.speedtest.net/speedtest-servers.php"
-			).body.scan /url="([^"]*)" lat="([^"]*)" lon="([^"]*)/
-			
-			servers = data.filter_map {|url, latitude, longitude|
-				url = url[/http:\/\/.+\d+/]
-				geopoint = GeoPoint.new latitude.to_f, longitude.to_f
-				Server.new url, geopoint if url
-			}.sort_by &:distance
-			
-			servers [0, max].sort_by {|server|
-				server.latency = server.ping pings
+		def self.get_best ping: @@ping, max: 10
+			( # probably not best practices, but it is fast for sure
+				(
+					HTTParty.get SERVERS_URL
+				) ["settings"]["servers"]["server"].filter_map {|data|
+					Server.new *[
+						data ["lat"].to_f,
+						data ["lon"].to_f,
+						data ["host"],
+						data ["sponsor"]
+					]
+				}.sort_by &:distance
+			) [0, max].sort_by {|server|
+				server.latency = server.ping ping
 			}.first
 		end
-		
-		def to_best! pings: 1, max: 10
-			best = Server.get_best pings: pings, max: max
-			
-			self.url = best.url
-			self.geopoint = best.geopoint
-			self.latency = best.latency
-		end
 	end
+	
+	SERVER = Server.new
 end
 
 
