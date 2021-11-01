@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 	end
 	
 	spec.bindir        = "exe"
-	spec.executables   = spec.files.grep /\Aexe\// {|file|
+	spec.executables   = spec.files.grep(/\Aexe\//) {|file|
 		File.basename file
 	}
 	spec.require_paths = ["lib"]
