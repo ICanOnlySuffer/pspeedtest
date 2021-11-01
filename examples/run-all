@@ -1,0 +1,11 @@
+#!/bin/ruby
+
+line = ?- * `tput cols`.to_i + ?\n
+
+Dir.glob "*.rb" do |file|
+	puts "\n#{line}- Now running '#{file}'\n#{line}"
+	require_relative file
+end
+
+
+
