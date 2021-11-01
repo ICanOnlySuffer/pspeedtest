@@ -5,14 +5,14 @@ class Numeric
 	end
 end
 
-module PochaSpeedTest
-	GeoPoint = Struct.new :latitude, :longitude do
-		def distance_to latitude, longitude
+class PochaSpeedTest
+	GeoPoint = Struct.new :lat, :lon do
+		def distance_to lat, lon
 			a = (
-				(Math.sin ((latitude - self.latitude).radians / 2)) ** 2 +
-				(Math.cos self.latitude.radians) *
+				(Math.sin ((lat - self.lat).radians / 2)) ** 2 +
+				(Math.cos self.lat.radians) *
 				(Math.cos latitude.radians) *
-				(Math.sin ((longitude - self.longitude).radians / 2)) ** 2
+				(Math.sin ((lon - self.lon).radians / 2)) ** 2
 			)
 			
 			12742 * (Math.atan2 (Math.sqrt (a)), (Math.sqrt (1 - a)))
