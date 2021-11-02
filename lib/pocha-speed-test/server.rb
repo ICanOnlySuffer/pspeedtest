@@ -1,6 +1,6 @@
 
 class PochaSpeedTest
-	SERVERS_URL = "https://www.speedtest.net/speedtest-servers.php"
+	SERVERS_URL = 'https://www.speedtest.net/speedtest-servers.php'.freeze
 	
 	Server = Struct.new :lat, :lon, :host, :sponsor, :latency do
 		def distance lat = USER.lat, lon = USER.lon
@@ -21,26 +21,32 @@ class PochaSpeedTest
 					%sHost: %s
 					%sCoords: %.#{decimals}f, %.#{decimals}f [%.2fkm]
 				TEXT
+			when :detailed
+				<<~TEXT % [spacing, sponsor, host, spacing, lat, lon, distance]
+					%sSponsor: %s (%s)
+					%sCoords: %.#{decimals}f, %.#{decimals}f [%.2fkm]
+				TEXT
 			when :compact
-				<<~TEXT % [host, lat, lon]
-					host: %s, lat: %.#{decimals}f, lon: %.#{decimals}f
+				<<~TEXT % [spacing, host, lat, lon]
+					%shost: %s, lat: %.#{decimals}f, lon: %.#{decimals}f
 				TEXT
 			else
 				raise "Error: no mode %s for server.to_s" % mode.inspect
 			end
 		end
 		
+		# looking beautiful
 		def ping enumerator = 1.times
 			enumerator.map {
 				start = Time.now
-				page = HTTParty.get "http://%s/speedtest/latency.txt" % host
+				HTTParty.get "http://#{host}/speedtest/latency.txt"
 				Time.now - start
-			}.sum * 100 / n rescue Float::INFINITY
+			}.sum * 100 / enumerator.size rescue Float::INFINITY
 		end
 		
 		def update! ping: 1.times, max: 10
 			self.lat, self.lon, self.host, self.sponsor, self.latency = *(
-				Server.get_best ping: ping, max: max
+				Server.best ping: ping, max: max
 			)
 			self
 		end
@@ -54,8 +60,6 @@ class PochaSpeedTest
 				when :censored
 					spacing + "downloading " \
 					"http://<host>/speedtest/random%#{size}x%#{size}.jpg\n"
-				else
-					""
 				end
 				
 				Thread.new {
@@ -70,19 +74,19 @@ class PochaSpeedTest
 		end
 		
 		def upload_speed sizes = @@upload_sizes, debug: nil, spacing: "  "
+			
 			url = "http://#{host}/speedtest/upload.php"
 			
 			threads = sizes.map {|size|
 				debug_line = case debug
-					when :default, true
-						spacing + "uploading #{size.bytes decimals: 0} to " \
-						"#{url}\n"
-					when :censored
-						spacing + "uploading " + size.bytes + " to " \
-						"http://<host>/speedtest/upload.php\n"
-					else
-						""
-					end
+				when :default, true
+					spacing + "uploading #{size.bytes decimals: 0} to " \
+					"#{url}\n"
+				when :censored
+					spacing + "uploading #{size.bytes decimals: 0} to " \
+					"http://<host>/speedtest/upload.php\n"
+				end
+				
 				Thread.new {
 					print debug_line
 					(HTTParty.post url, body: ?A * size) [/\d+/].to_i
@@ -94,9 +98,14 @@ class PochaSpeedTest
 			Speed.new Time.now - start, bytes
 		end
 		
+		# this alias will be removed in next 0.x.0 release
 		def self.get_best ping: @@ping, max: 10
+			self.best ping: @@ping, max: 10
+		end
+		
+		def self.best ping: t_ping, max: 10
 			( # probably not best practices, but it is fast for sure
-				(
+				( # sometimes return nil, it should be fixed in the next release
 					HTTParty.get SERVERS_URL
 				) ["settings"]["servers"]["server"].filter_map {|data|
 					Server.new *[
