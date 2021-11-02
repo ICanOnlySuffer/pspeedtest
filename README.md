@@ -48,14 +48,12 @@ Create a new test object with any of the following options
 require "pocha-speed-test"
 
 test = PochaSpeedTest.new
-
 test.run
 ```
 
 With the default block it should output something like this:
 
-```
-
+```ruby
 --- Running test ---
 
 User:
@@ -74,7 +72,7 @@ Starting download tests:
   downloading http://<host>/speedtest/random1000x1000.jpg
   downloading http://<host>/speedtest/random1000x1000.jpg
   downloading http://<host>/speedtest/random1000x1000.jpg
-Took 11.8769 seconds to download 15890272 bytes [10.21mbps]
+Took 9.0169 seconds to download 15890272 bytes [13.45mbps]
 
 Starting upload tests:
   uploading 390Kb to http://<host>/speedtest/upload.php
@@ -85,8 +83,7 @@ Starting upload tests:
   uploading 390Kb to http://<host>/speedtest/upload.php
   uploading 390Kb to http://<host>/speedtest/upload.php
   uploading 390Kb to http://<host>/speedtest/upload.php
-Took 14.3111 seconds to download 3200000 bytes [1.71mbps]
-
+Took 13.2124 seconds to download 3200000 bytes [1.85mbps]
 ```
 
 See more at:
