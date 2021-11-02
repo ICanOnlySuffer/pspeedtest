@@ -2,7 +2,7 @@
 class PochaSpeedTest
 	BLOCKS = {
 		default: proc {
-			puts "\n--- Running test ---\n\n"
+			puts "--- Running test ---", nil
 			
 			puts "User:", USER.update!
 			puts "Server:", SERVER.update!
@@ -17,9 +17,19 @@ class PochaSpeedTest
 			
 			[download_speed, upload_speed]
 		},
-		
+=begin
+		# probably next update, pushing a new one soon because of mayor bug
+		detailed: proc {
+			puts "\n--- Running test ---\n\n"
+			
+			puts "User:", USER.update!
+			puts "Server:", (SERVER.update!.to_s :detailed)
+			
+			
+		},
+=end
 		censored: proc {
-			puts "\n--- Running test ---\n"
+			puts "--- Running test ---", nil
 			
 			USER.update!
 			SERVER.update!
@@ -39,7 +49,7 @@ class PochaSpeedTest
 			USER.update!
 			SERVER.update!
 			
-			[server.download_speed, server.upload_speed]
+			[SERVER.download_speed, SERVER.upload_speed]
 		}
 	}.freeze
 end
