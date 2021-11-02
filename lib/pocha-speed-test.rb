@@ -9,6 +9,8 @@ require_relative "pocha-speed-test/speed"
 require "httparty"
 
 class PochaSpeedTest
+	attr_accessor :download_sizes, :upload_sizes, :ping, :block
+	
 	@@download_sizes = [1_000] * 8
 	@@upload_sizes = [400_000] * 8
 	@@block = BLOCKS[:default]
@@ -16,7 +18,7 @@ class PochaSpeedTest
 	
 	def run enumerator = 1.times
 		enumerator.each do
-			@block.call @download_sizes, @upload_sizes, @ping
+			@block.call self
 		end
 	end
 	
