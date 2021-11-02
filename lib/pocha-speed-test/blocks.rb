@@ -1,18 +1,20 @@
 
 class PochaSpeedTest
 	BLOCKS = {
-		default: proc {
+		default: proc {|test|
 			puts "--- Running test ---", nil
 			
 			puts "User:", USER.update!
 			puts "Server:", SERVER.update!
 			
 			puts "\nStarting download tests:"
-			download_speed = SERVER.download_speed debug: true
+			download_speed = SERVER.download_speed test.download_sizes,
+				debug: true
 			puts download_speed.details
 			
 			puts "\nStarting upload tests:"
-			upload_speed = SERVER.upload_speed debug: true
+			upload_speed = SERVER.upload_speed test.upload_sizes,
+				debug: true
 			puts upload_speed.details
 			
 			[download_speed, upload_speed]
@@ -28,28 +30,33 @@ class PochaSpeedTest
 			
 		},
 =end
-		censored: proc {
+		censored: proc {|test|
 			puts "--- Running test ---", nil
 			
 			USER.update!
 			SERVER.update!
 			
 			puts "\nStarting download tests:"
-			download_speed = SERVER.download_speed debug: :censored
+			download_speed = SERVER.download_speed test.download_sizes,
+				debug: :censored
 			puts download_speed.details
 			
 			puts "\nStarting upload tests:"
-			upload_speed = SERVER.upload_speed debug: :censored
+			upload_speed = SERVER.upload_speed test.upload_sizes,
+				debug: :censored
 			puts upload_speed.details
 			
 			[download_speed, upload_speed]
 		},
 		
-		no_output: proc {
+		no_output: proc {|test|
 			USER.update!
 			SERVER.update!
 			
-			[SERVER.download_speed, SERVER.upload_speed]
+			[
+				(SERVER.download_speed test.download_sizes),
+				(SERVER.upload_speed test.upload_sizes)
+			]
 		}
 	}.freeze
 end
