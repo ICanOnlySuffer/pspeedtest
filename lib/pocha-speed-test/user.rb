@@ -25,7 +25,7 @@ class PochaSpeedTest
 			@@lat = data ["lat"].to_f
 			@@lon = data ["lon"].to_f
 			
-			USER # helps doing stuff like: puts User.update.to_s mode: compact
+			USER # helps doing stuff like: puts USER.update!
 		end
 		
 		def self.to_s mode: :default, spacing: "  ", decimals: 4
