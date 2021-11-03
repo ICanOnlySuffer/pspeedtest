@@ -1,7 +1,5 @@
 
 class PochaSpeedTest
-	SERVERS_URL = 'https://www.speedtest.net/speedtest-servers.php'.freeze
-	
 	Server = Struct.new :lat, :lon, :host, :sponsor, :latency do
 		def distance lat = USER.lat, lon = USER.lon
 			a = (
@@ -35,7 +33,6 @@ class PochaSpeedTest
 			end
 		end
 		
-		# looking beautiful
 		def ping enumerator = 1.times
 			enumerator.map {
 				start = Time.now
@@ -44,16 +41,10 @@ class PochaSpeedTest
 			}.sum * 100 / enumerator.size rescue Float::INFINITY
 		end
 		
-		def update! ping: 1.times, max: 10
-			self.lat, self.lon, self.host, self.sponsor, self.latency = *(
-				Server.best ping: ping, max: max
-			)
-			self
-		end
-		
-		def download_speed sizes = @@download_sizes, debug: nil, spacing: "  "
+		def download_speed sizes = [1_000] * 8, debug: nil, spacing: "  "
 			threads = sizes.map {|size|
 				url = "http://#{host}/speedtest/random#{size}x#{size}.jpg"
+				
 				debug_line = case debug
 				when :default, true
 					spacing + "downloading " + url + ?\n
@@ -69,15 +60,14 @@ class PochaSpeedTest
 			}
 			
 			start = Time.now
-			bytes = (threads.map &:value).sum
-			Speed.new Time.now - start, bytes
+			Speed.new (threads.map &:value).sum, Time.now - start
 		end
 		
-		def upload_speed sizes = @@upload_sizes, debug: nil, spacing: "  "
-			
+		def upload_speed sizes = [400_000] * 8, debug: nil, spacing: "  "
 			url = "http://#{host}/speedtest/upload.php"
 			
 			threads = sizes.map {|size|
+				
 				debug_line = case debug
 				when :default, true
 					spacing + "uploading #{size.bytes decimals: 0} to " \
@@ -94,34 +84,44 @@ class PochaSpeedTest
 			}
 			
 			start = Time.now
-			bytes = (threads.map &:value).sum
-			Speed.new Time.now - start, bytes
+			Speed.new (threads.map &:value).sum, Time.now - start
 		end
 		
-		# this alias will be removed in next 0.x.0 release
-		def self.get_best ping: @@ping, max: 10
-			self.best ping: @@ping, max: 10
+		def self.fetch
+			(
+				HTTParty.get "https://speedtest.net/speedtest-servers.php"
+			) ["settings"]["servers"]["server"].map {|data|
+				Server.new *[
+					data ["lat"].to_f,
+					data ["lon"].to_f,
+					data ["host"],
+					data ["sponsor"]
+				]
+			} rescue [] # connection error
 		end
 		
-		def self.best ping: t_ping, max: 10
-			( # probably not best practices, but it is fast for sure
-				( # sometimes return nil, it should be fixed in the next release
-					HTTParty.get SERVERS_URL
-				) ["settings"]["servers"]["server"].filter_map {|data|
-					Server.new *[
-						data ["lat"].to_f,
-						data ["lon"].to_f,
-						data ["host"],
-						data ["sponsor"]
-					]
-				}.sort_by &:distance
-			) [0, max].sort_by {|server|
+		def self.nearby
+			self.fetch.sort_by &:distance
+		end
+		
+		def self.best ping: 1.times, max: 10
+			self.nearby[0, max].sort_by {|server|
 				server.latency = server.ping ping
-			}.first
+			}.first || Server.new
 		end
 	end
 	
+	# To facilitate working with only one server
+	
 	SERVER = Server.new
+	
+	def SERVER.update! ping: 1.times, max: 10
+		SERVER.lat, SERVER.lon, SERVER.host, SERVER.sponsor, SERVER.latency = *(
+			Server.best ping: ping, max: max
+		)
+		
+		SERVER # helps doing stuff like: puts server.update!
+	end
 end
 
 

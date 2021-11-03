@@ -1,5 +1,4 @@
 
-
 class Numeric
 	def bytes decimals: 2
 		string, max = {
@@ -22,7 +21,7 @@ class Numeric
 end
 
 class PochaSpeedTest
-	Speed = Struct.new :time, :bytes do
+	Speed = Struct.new :bytes, :time do
 		def bits
 			bytes * 8 / time
 		end

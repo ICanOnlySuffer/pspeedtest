@@ -8,45 +8,31 @@ class PochaSpeedTest
 			puts "Server:", SERVER.update!
 			
 			puts "\nStarting download tests:"
-			download_speed = SERVER.download_speed test.download_sizes,
-				debug: true
-			puts download_speed.details
+			download = SERVER.download_speed test.download, debug: true
+			puts download.details
 			
 			puts "\nStarting upload tests:"
-			upload_speed = SERVER.upload_speed test.upload_sizes,
-				debug: true
-			puts upload_speed.details
+			upload = SERVER.upload_speed test.upload, debug: true
+			puts upload.details
 			
-			[download_speed, upload_speed]
+			[download, upload]
 		},
-=begin
-		# probably next update, pushing a new one soon because of mayor bug
-		detailed: proc {
-			puts "\n--- Running test ---\n\n"
-			
-			puts "User:", USER.update!
-			puts "Server:", (SERVER.update!.to_s :detailed)
-			
-			
-		},
-=end
+		
 		censored: proc {|test|
-			puts "--- Running test ---", nil
-			
+			puts "--- Running test ---"
+						
 			USER.update!
 			SERVER.update!
 			
 			puts "\nStarting download tests:"
-			download_speed = SERVER.download_speed test.download_sizes,
-				debug: :censored
-			puts download_speed.details
+			download = SERVER.download_speed test.download, debug: :censored
+			puts download.details
 			
 			puts "\nStarting upload tests:"
-			upload_speed = SERVER.upload_speed test.upload_sizes,
-				debug: :censored
-			puts upload_speed.details
+			upload = SERVER.upload_speed test.upload, debug: :censored
+			puts upload.details
 			
-			[download_speed, upload_speed]
+			[download, upload]
 		},
 		
 		no_output: proc {|test|
@@ -54,8 +40,8 @@ class PochaSpeedTest
 			SERVER.update!
 			
 			[
-				(SERVER.download_speed test.download_sizes),
-				(SERVER.upload_speed test.upload_sizes)
+				(SERVER.download_speed test.download),
+				(SERVER.upload_speed test.upload)
 			]
 		}
 	}.freeze
