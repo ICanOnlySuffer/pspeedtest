@@ -29,17 +29,14 @@ Or install it yourself as:
 ## Usage
 
 Create a new test object with any of the following options
-* download_sizes: (Integer Array)
+* download: (Integer Array)
 	* Sizes of the images to download
 	* Only values in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
 	* defaults to [1_000] * 8
-* upload_sizes: (Integer Array)
+* upload: (Integer Array)
 	* Sizes of the strings to upload
 	* Any values
 	* defaults to [400_000] * 8
-* ping: (Enumerator)
-	* Times the server will be pinged
-	* defaults to 4.times
 * &block (Proc)
 	* Block to run
 	* defaults to PochaSpeedTest::BLOCKS[:default]
@@ -90,9 +87,9 @@ See more at:
 * [https://www.rubydoc.info/gems/pocha-speed-test](
 	https://www.rubydoc.info/gems/pocha-speed-test)
 
-Or check out the tests/examples:
+Or check out the examples:
 * [hello-pocha.rb and many more](
-	tests/)
+	https://github.com/ICanOnlySuffer/PochaSpeedTest/tree/main/examples)
 
 Or at PochaSpeedTestLogger
 * [stil in development](
