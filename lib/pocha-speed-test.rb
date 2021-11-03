@@ -32,7 +32,11 @@ class PochaSpeedTest
 		}
 	end
 	
-	def initialize servers: [], download: [500] * 8, upload: [80000] * 8, &block
+	def initialize servers: [],
+		download: [1_000] * 8,
+		upload: [400_000] * 8,
+		&block
+		
 		self.servers = servers
 		
 		self.download = download
