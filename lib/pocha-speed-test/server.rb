@@ -33,12 +33,14 @@ class PochaSpeedTest
 			end
 		end
 		
-		def ping enumerator = 1.times
-			enumerator.map {
+		def ping
+			begin
 				start = Time.now
 				HTTParty.get "http://#{host}/speedtest/latency.txt"
-				Time.now - start
-			}.sum * 100 / enumerator.size rescue Float::INFINITY
+				(Time.now - start) * 100
+			rescue
+				Float::INFINITY
+			end
 		end
 		
 		def download_speed sizes = [1_000] * 8, debug: nil, spacing: "  "
@@ -87,7 +89,7 @@ class PochaSpeedTest
 			Speed.new (threads.map &:value).sum, Time.now - start
 		end
 		
-		def self.fetch
+		def self.fetch buffer_size: 10
 			(
 				HTTParty.get "https://speedtest.net/speedtest-servers.php"
 			) ["settings"]["servers"]["server"].map {|data|
@@ -97,16 +99,16 @@ class PochaSpeedTest
 					data ["host"],
 					data ["sponsor"]
 				]
-			} rescue [] # connection error
+			} [0, buffer_size] rescue [] # connection error
 		end
 		
 		def self.nearby
 			self.fetch.sort_by &:distance
 		end
 		
-		def self.best ping: 1.times, max: 10
-			self.nearby[0, max].sort_by {|server|
-				server.latency = server.ping ping
+		def self.best buffer_size: 10
+			self.nearby[0, buffer_size].sort_by {|server|
+				server.latency = server.ping
 			}.first || Server.new
 		end
 	end
@@ -115,12 +117,12 @@ class PochaSpeedTest
 	
 	SERVER = Server.new
 	
-	def SERVER.update! ping: 1.times, max: 10
+	def SERVER.update! buffer_size: 10
 		SERVER.lat, SERVER.lon, SERVER.host, SERVER.sponsor, SERVER.latency = *(
-			Server.best ping: ping, max: max
+			Server.best buffer_size: buffer_size
 		)
 		
-		SERVER # helps doing stuff like: puts server.update!
+		SERVER # helps doing stuff like: puts SERVER.update!
 	end
 end
 
