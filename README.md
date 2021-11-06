@@ -28,7 +28,7 @@ Or install it yourself as:
 
 ## Usage
 
-Create a new test object with any of the following options
+Create a new test object with any of the following options:
 * download: (Integer Array)
 	* Sizes of the images to download
 	* Only values in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
@@ -80,7 +80,7 @@ Starting upload tests:
   uploading 390Kb to http://<host>/speedtest/upload.php
   uploading 390Kb to http://<host>/speedtest/upload.php
   uploading 390Kb to http://<host>/speedtest/upload.php
-Took 13.2124 seconds to download 3200000 bytes [1.85mbps]
+Took 13.2124 seconds to upload 3200000 bytes [1.85mbps]
 ```
 
 See more at:
