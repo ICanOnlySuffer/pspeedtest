@@ -9,11 +9,11 @@ class PochaSpeedTest
 			
 			puts "\nStarting download tests:"
 			download = SERVER.download_speed test.download, debug: true
-			puts download.details
+			puts download.details "download"
 			
 			puts "\nStarting upload tests:"
 			upload = SERVER.upload_speed test.upload, debug: true
-			puts upload.details
+			puts upload.details "upload"
 			
 			[download, upload]
 		},
@@ -26,11 +26,11 @@ class PochaSpeedTest
 			
 			puts "\nStarting download tests:"
 			download = SERVER.download_speed test.download, debug: :censored
-			puts download.details
+			puts download.details "download"
 			
 			puts "\nStarting upload tests:"
 			upload = SERVER.upload_speed test.upload, debug: :censored
-			puts upload.details
+			puts upload.details "upload"
 			
 			[download, upload]
 		},
