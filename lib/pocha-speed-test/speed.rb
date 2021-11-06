@@ -30,10 +30,25 @@ class PochaSpeedTest
 			bits.bps
 		end
 		
-		def details decimals: 4
-			"Took %.#{decimals}f seconds to download %i bytes [%s]" % [
-				time, bytes, bits.bps
+		def + speed
+			Speed.new self.bytes + speed.bytes, self.time + speed.time
+		end
+		
+		def / amount
+			Speed.new self.bytes / amount, self.time / amount
+		end
+		
+		def details what, decimals: 4
+			"Took %.#{decimals}f seconds to %s %i bytes [%s]" % [
+				time, what, bytes, bits.bps
 			]
+		end
+		
+		def self.average speeds
+			sum_bytes = speeds.sum &:bytes
+			sum_time = speeds.sum &:time
+			
+			Speed.new sum_bytes / speeds.size, sum_time / speeds.size
 		end
 	end
 end
