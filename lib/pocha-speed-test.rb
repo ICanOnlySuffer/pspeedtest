@@ -11,7 +11,7 @@ require "httparty"
 
 class PochaSpeedTest
 	def run enumerator = 1.times
-		enumerator.each do
+		enumerator.map do
 			self.block.call self
 		end
 	end
@@ -20,25 +20,7 @@ class PochaSpeedTest
 		self.block = block
 	end
 	
-	def download_speed
-		self.servers.map {|server|
-			server.download_speed self.download_sizes
-		}
-	end
-	
-	def upload_speed
-		self.servers.map {|server|
-			server.upload_speed self.upload_sizes
-		}
-	end
-	
-	def initialize servers: [],
-		download: [1_000] * 8,
-		upload: [400_000] * 8,
-		&block
-		
-		self.servers = servers
-		
+	def initialize download: [1_000] * 12, upload: [400_000] * 12, &block
 		self.download = download
 		self.upload = upload
 		
