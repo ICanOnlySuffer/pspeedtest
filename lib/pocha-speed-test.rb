@@ -9,6 +9,17 @@ require_relative "pocha-speed-test/user"
 
 require "httparty"
 
+puts <<~TEXT
+	[DEPRECATION NOTICE]
+	The new version of this gem also comes with a name change. The new
+	name of the project is 'pspeedtest', and since RubyGems doesn't
+	support renaming, this version with the old name will be deprecated
+	while the new one keeps being updated.
+	
+	Installation:
+	$ gem install pspeedtest
+TEXT
+
 class PochaSpeedTest
 	def run enumerator = 1.times
 		enumerator.map do
