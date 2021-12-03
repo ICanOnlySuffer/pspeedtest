@@ -2,6 +2,58 @@
 
 require "pspeedtest"
 
+=begin
+
+TODO:
+- Add saving output to file
+- Add daemonization
+
+=end
+
+HELP = {
+	"en" => {
+		"download" => <<~TXT % ["  ", "  ", "  "],
+			--download=(Integer Array)
+			%s- Sizes of the images to download.
+			%s- Any values in [500, 750, 1000, 1500, 2000, 2500, 3000, 3500]
+			%s- Defaults to [1000] * 8
+		TXT
+		"upload" => <<~TXT % ["  ", "  ", "  "]
+			--upload=(Integer Array)
+			%s- Sizes of the strings to upload
+			%s- Any values
+			%s- Defaults to [4000000] * 8
+		TXT
+	},
+} [(ENV["LANG"] || "en")[..1]]
+
+ARGV.each do |arg|
+	if arg.start_with? "--" then
+		key, value = arg [2..].split ?=
+		case key
+		when "help"
+			puts HELP[value] || (HELP.values.join)
+			exit 0
+		when "version"
+			puts <<~TXT % PSpeedTest::VERSION
+				pspeedtest v%s - Piero Rojas (ICanOnlySuffer)
+				Adapted from from petemyron's speedtest gem
+				#{"  "}https://github.com/petemyron/speedtest/\e[0m
+				Which is a gemmed version of lacostej's speedtest.rb
+				#{"  "}https://github.com/lacostej/speedtest.rb\e[0m
+				Under MIT Licence (Jerome Lacoste)
+			TXT
+			exit 0
+		else
+			puts "Unkown flag --#{key}"
+			exit 1
+		end
+	else
+		puts HELP.values.join
+		exit 0
+	end
+end
+
 PSpeedTest.new.run
 
 
