@@ -1,4 +1,4 @@
-# PSpeedTest
+# pspeedtest (pocha-speed-test)
 
 A RubyGem to test internet speed with [speedtest.net](
 	https://www.speedtest.net/) servers.
