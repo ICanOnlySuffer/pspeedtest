@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 	spec.files = Dir["lib/**/*", "bin/*"]
 	
 	spec.bindir        = "bin"
-	spec.executables   = ["bin/pspeedtest"]
+	spec.executables   = ["pspeedtest"]
 	spec.require_paths = ["lib"]
 	
 	spec.post_install_message = ?\n + {
