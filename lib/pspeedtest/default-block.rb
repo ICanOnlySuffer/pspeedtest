@@ -13,7 +13,7 @@ class PSpeedTest
 		puts "Server:"
 		puts SERVER.update!.to_s debug: <<~TXT
 			#{"  "}Sponsor: %{sponsor} (%{host})
-			#{"  "}Latency: %{latency}ms
+			#{"  "}Latency: %<latency>.4fms
 			#{"  "}Coordinates: %<lat>.4f, %<lon>.4f (%<distance>.2fkm)
 			
 		TXT
