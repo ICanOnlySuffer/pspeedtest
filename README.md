@@ -1,4 +1,4 @@
-# PochaSpeedTest
+# PSpeedTest
 
 A RubyGem to test internet speed with [speedtest.net](
 	https://www.speedtest.net/) servers.
@@ -15,49 +15,51 @@ whose inspiration was [fopina's pyspeedtest](
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pocha-speed-test'
+gem 'pspeedtest'
 ```
 
 And then execute:
 
-    $ bundle install
+	$ bundle install
 
 Or install it yourself as:
 
-	$ gem install pocha-speed-test
+	$ gem install pspeedtest
 
 ## Usage
 
-Create a new test object with any of the following options:
-* download: (Integer Array)
+Create a new test object with any of the following optional arguments
+* :download (Integer Array)
 	* Sizes of the images to download
-	* Only values in [350, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
+	* Only values in [500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000]
 	* defaults to [1_000] * 8
-* upload: (Integer Array)
+* :upload (Integer Array)
 	* Sizes of the strings to upload
 	* Any values
 	* defaults to [400_000] * 8
 * &block (Proc)
 	* Block to run
-	* defaults to PochaSpeedTest::BLOCKS[:default]
+	* defaults to pspeedtest::DEFAULT_BLOCK
+
+Example with no arguments:
 
 ```ruby
-require "pocha-speed-test"
+require "pspeedtest"
 
-test = PochaSpeedTest.new
+test = pspeedtest.new
 test.run
 ```
 
-With the default block it should output something like this:
-
 ```ruby
+
 --- Running test ---
 
 User:
   IP: <your-ip>
-  Coords: <lat>, <lon>
+  Coordinateds: <lat>, <lon>
+
 Server:
-  Host: <host>
+  Sponsor: <host>
   Coords: <lat>, <lon> [<distance>]
 
 Starting download tests:
@@ -84,16 +86,12 @@ Took 13.2124 seconds to upload 3200000 bytes [1.85mbps]
 ```
 
 See more at:
-* [https://www.rubydoc.info/gems/pocha-speed-test](
-	https://www.rubydoc.info/gems/pocha-speed-test)
+* [https://www.rubydoc.info/gems/pspeedtest](
+	https://www.rubydoc.info/gems/pspeedtest)
 
 Or check out the examples:
 * [hello-pocha.rb and many more](
-	https://github.com/ICanOnlySuffer/PochaSpeedTest/tree/main/examples)
-
-Or at PochaSpeedTestLogger
-* [stil in development](
-	https://github.com/ICanOnlySuffer/PochaSpeedTestLogger)
+	https://github.com/ICanOnlySuffer/pspeedtest/tree/main/examples)
 
 ## Development
 

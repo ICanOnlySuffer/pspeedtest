@@ -1,12 +1,11 @@
 
-PSpeedTest = Struct.new :to_download, :to_upload, :servers, :block
+PSpeedTest = Struct.new :to_download, :to_upload, :block
 
+require_relative "pspeedtest/default-block"
 require_relative "pspeedtest/version"
-require_relative "pspeedtest/blocks"
 require_relative "pspeedtest/server"
 require_relative "pspeedtest/speed"
 require_relative "pspeedtest/user"
-require_relative "pspeedtest/lang"
 
 require "httparty"
 
