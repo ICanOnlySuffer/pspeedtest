@@ -26,7 +26,7 @@ class PSpeedTest
 			
 		TXT
 		
-		puts "\nStarting upload tests:"
+		puts "Starting upload tests:"
 		upload = SERVER.upload_speed test.to_upload,
 			debug: "  uploading %{bytes} to %{url}\n"
 		puts upload.to_s debug: <<~TXT
