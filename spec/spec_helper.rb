@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "pocha-speed-test"
+require "pspeedtest"
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure

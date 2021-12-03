@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe PochaSpeedTest do
+RSpec.describe PSpeedTest do
 	
 	# it "Should update USER" do
 	# 	PochaSpeedTest::USER.update!
