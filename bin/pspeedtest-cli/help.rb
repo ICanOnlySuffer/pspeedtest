@@ -21,7 +21,7 @@ HELP = {
 			--download=(Integer Array)
 			  - Sizes of the images to download.
 			  - Only values in:
-			#{ALLOWED_VALUES[:download]}
+			      #{ALLOWED_VALUES[:download]}
 			  - By default: [1000] * 8
 			  - Example:
 			      #{EXAMPLES[:download]}
