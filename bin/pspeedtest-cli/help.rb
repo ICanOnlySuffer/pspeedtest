@@ -72,7 +72,7 @@ HELP = {
 			--download=(Arreglo de Enteros)
 			  - Tamaños de las imágenes a descargar
 			  - Solo valores en:
-			#{ALLOWED_VALUES[:download]}
+			      #{ALLOWED_VALUES[:download]}
 			  - Por defecto [1000] * 8
 			  - Ejemplo:
 			      #{EXAMPLES[:download]}
