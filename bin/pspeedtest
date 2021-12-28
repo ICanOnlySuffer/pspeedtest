@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require_relative "../lib/pspeedtest"
 require_relative "pspeedtest-cli/lang"
 require_relative "pspeedtest-cli/help"
