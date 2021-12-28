@@ -3,18 +3,18 @@ class PSpeedTest
 	DEFAULT_BLOCK = proc {|test|
 		puts nil, "--- Running test ---", nil
 		
-		puts "User:"
 		puts USER.update!.to_s debug: <<~TXT
-			#{"  "}IP: %{ip}
-			#{"  "}Coordinates: %<lat>.4f, %<lon>.4f
+			User:
+			  IP: %{ip}
+			  Coordinates: %<lat>.4f, %<lon>.4f
 			
 		TXT
 		
-		puts "Server:"
 		puts SERVER.update!.to_s debug: <<~TXT
-			#{"  "}Sponsor: %{sponsor} (%{host})
-			#{"  "}Latency: %<latency>.4fms
-			#{"  "}Coordinates: %<lat>.4f, %<lon>.4f (%<distance>.2fkm)
+			Server:
+			  Sponsor: %{sponsor} (%{host})
+			  Latency: %<latency>.4fms
+			  Coordinates: %<lat>.4f, %<lon>.4f (%<distance>.2fkm)
 			
 		TXT
 		
