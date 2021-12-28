@@ -1,60 +1,104 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
-require "pspeedtest"
+require_relative "../lib/pspeedtest"
+require_relative "pspeedtest-cli/lang"
+require_relative "pspeedtest-cli/help"
+require_relative "pspeedtest-cli/version"
 
 =begin
+NOTE
 
-TODO:
-- Add saving output to file
-- Add daemonization
-
+This is 
 =end
 
-HELP = {
-	"en" => {
-		"download" => <<~TXT % ["  ", "  ", "  "],
-			--download=(Integer Array)
-			%s- Sizes of the images to download.
-			%s- Any values in [500, 750, 1000, 1500, 2000, 2500, 3000, 3500]
-			%s- Defaults to [1000] * 8
-		TXT
-		"upload" => <<~TXT % ["  ", "  ", "  "]
-			--upload=(Integer Array)
-			%s- Sizes of the strings to upload
-			%s- Any values
-			%s- Defaults to [4000000] * 8
-		TXT
-	},
-} [(ENV["LANG"] || "en")[..1]]
+CLI = {
+	runs: 1.times,
+	file: nil,
+	debug: "",
+	delay: 10,
+	print_errors: false
+}
+
+PSpeedTest::USER.update!
+
+cli = PSpeedTest.new do |test|
+	begin
+		PSpeedTest::SERVER.update!
+		
+		download = PSpeedTest::SERVER.download_speed test.to_download
+		upload = PSpeedTest::SERVER.upload_speed test.to_upload
+		
+		debug = CLI[:debug] % {
+			"server.host": PSpeedTest::SERVER.host,
+			"server.sponsor": PSpeedTest::SERVER.sponsor,
+			"server.latency": PSpeedTest::SERVER.latency,
+			"server.latitude": PSpeedTest::SERVER.lat,
+			"server.longitude": PSpeedTest::SERVER.lon,
+			"server.distance.km": PSpeedTest::SERVER.distance,
+			"server.distance.mi": PSpeedTest::SERVER.distance * 0.62137119,
+			"download.bits": download.bits,
+			"download.time": download.time,
+			"download.bps": download.bps,
+			"upload.bits": upload.bits,
+			"upload.time": upload.time,
+			"upload.bps": upload.bps
+		}
+		
+		if CLI[:file] then
+			File.write CLI[:file], debug, mode: ?a
+		else
+			print debug
+		end
+	rescue => error
+		puts "#{error.class}: #{error.class}" if CLI[:print_errors]
+	end
+	
+	sleep CLI[:delay]
+end
 
 ARGV.each do |arg|
-	if arg.start_with? "--" then
-		key, value = arg [2..].split ?=
-		case key
-		when "help"
-			puts HELP[value] || (HELP.values.join)
-			exit 0
-		when "version"
-			puts <<~TXT % PSpeedTest::VERSION
-				pspeedtest v%s - Piero Rojas (ICanOnlySuffer)
-				Adapted from from petemyron's speedtest gem
-				#{"  "}https://github.com/petemyron/speedtest/\e[0m
-				Which is a gemmed version of lacostej's speedtest.rb
-				#{"  "}https://github.com/lacostej/speedtest.rb\e[0m
-				Under MIT Licence (Jerome Lacoste)
-			TXT
-			exit 0
-		else
-			puts "Unkown flag --#{key}"
-			exit 1
-		end
+	key, value = arg.split ?=
+	
+	case key
+	when "-h", "--help"
+		puts HELP[value] || HELP.values.join
+		exit 0
+	when "-v", "version"
+		puts VERSION
+		exit 0
+	when "--download"
+		cli.to_download = value == "nil" ? [] : (split '?').map {Integer _1}
+	when "--upload"
+		cli.to_upload = value == "nil" ? [] : (split '?').map {Integer _1}
+	when "--debug"
+		CLI[:debug] = value.gsub /\\./, {
+			'\n' => ?\n,
+			'\t' => ?\t,
+			'\\' => ?\\
+		}
+	when "--delay"
+		CLI[:delay] = value.to_i
+	when "--runs"
+		CLI[:runs] = (value == "infinity") ? loop : value.to_i.times
+	when "--file"
+		CLI[:file] = value
+	when "--print-errors"
+		CLI[:print_errors] = value == "true"
 	else
 		puts HELP.values.join
-		exit 0
+		exit 1
 	end
 end
 
-PSpeedTest.new.run
+cli.run CLI[:runs]
+
+
+
+
+
+
+
+
 
 
 
