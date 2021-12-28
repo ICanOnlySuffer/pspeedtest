@@ -141,8 +141,51 @@ Took 13.0868 seconds to upload 38400000 bits [2.80mbps]
 
 Still in development.
 
-```bash
-$ pspeedtest
+	$ pspeedtest --debug="speed: %{download.bps}, %{upload.bps}\n" --runs=20
+
+Use --help to see the full list of arguments
+
+$ pspeedtest --debug
+
+```ruby
+usage: [OPTION=VALUE]...
+--download=(Integer Array)
+  - Sizes of the images to download.
+  - Only values in:
+      [500, 750, 1000, 1500, 2000, 2500, 3000, 3500]
+  - By default: [1000] * 8
+  - Example:
+      --download=500,1500,2500,3500
+--upload=(Integer Array)
+  - Sizes of the strings to upload
+  - By default: [4000000] * 8
+  - Example:
+      --upload=2000000,4000000,6000000,8000000
+--debug=(String)
+  - String to be formated
+  - Only values in:
+      server:
+        {sponsor}, {host}, <latitude>, <longitude>, <latency>
+      upload/download:
+        {bits}, {time}, {bps}
+  - Example:
+    --debug="Speed: %{download.bps} %{upload.bps}"
+--delay=(Integer)
+  - Time to sleep between runs
+  - Example:
+    --delay=20
+--runs=(Integer or String)
+  - Times to run the block
+  - Only valid String is: "infinity"
+  - Example:
+    --runs=20
+--file=(String)
+  - File in which the output will be saved.
+  - Example:
+    --file="~/Documents/internet-speed.log"
+--print_errors=(Boolean)
+  - Prints connection errors
+  - By default: false
 ```
 
 See more at:
