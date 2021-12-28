@@ -6,9 +6,10 @@ require_relative "pspeedtest-cli/help"
 require_relative "pspeedtest-cli/version"
 
 =begin
-NOTE
-
-This is 
+TODO:
+- A better debug system
+  - Add more options for formating
+  - Make it easier to read
 =end
 
 CLI = {
@@ -18,8 +19,6 @@ CLI = {
 	delay: 10,
 	print_errors: false
 }
-
-PSpeedTest::USER.update!
 
 cli = PSpeedTest.new do |test|
 	begin
@@ -90,6 +89,7 @@ ARGV.each do |arg|
 	end
 end
 
+PSpeedTest::USER.update!
 cli.run CLI[:runs]
 
 
