@@ -23,6 +23,7 @@ cli = PSpeedTest.new do |test|
 	begin
 		PSpeedTest::SERVER.update!
 		
+		time = Time.now
 		download = PSpeedTest::SERVER.download_speed test.to_download
 		upload = PSpeedTest::SERVER.upload_speed test.to_upload
 		
@@ -39,7 +40,10 @@ cli = PSpeedTest.new do |test|
 			"download.bps": download.bps,
 			"upload.bits": upload.bits,
 			"upload.time": upload.time,
-			"upload.bps": upload.bps
+			"upload.bps": upload.bps,
+			"time.to_i": time.to_i,
+			"time.to_s": time.to_s,
+			"time.hms": (time.strftime "%H:%M:%S")
 		}
 		
 		if CLI[:file] then
@@ -72,6 +76,7 @@ ARGV.each do |arg|
 		CLI[:debug] = value.gsub /\\./, {
 			'\n' => ?\n,
 			'\t' => ?\t,
+			'\e' => ?\e,
 			'\\' => ?\\
 		}
 	when "--delay"
