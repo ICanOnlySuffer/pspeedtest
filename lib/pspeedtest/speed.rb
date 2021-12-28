@@ -28,11 +28,15 @@ end
 
 class PSpeedTest
 	Speed = Struct.new :bits, :time do
+		def bps
+			(bits / time).bps
+		end
+		
 		def to_s debug: "%{bps}"
 			debug % {
 				bits: bits,
 				time: time,
-				bps: (bits / time).bps
+				bps: bps
 			}
 		end
 		
