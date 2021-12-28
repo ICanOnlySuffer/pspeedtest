@@ -141,11 +141,22 @@ Took 13.0868 seconds to upload 38400000 bits [2.80mbps]
 
 Still in development.
 
-	$ pspeedtest --debug="speed: %{download.bps}, %{upload.bps}\n" --runs=20
+	$ pspeedtest --debug="%{time} %{download.bps} %{upload.bps}\n" --runs=8
+
+```
+2021-12-28 06:00:15 -0500 17.34mbps, 2.85mbps
+2021-12-28 06:00:41 -0500 16.27mbps, 2.85mbps
+2021-12-28 06:01:07 -0500 15.07mbps, 2.84mbps
+2021-12-28 06:01:34 -0500 15.98mbps, 2.85mbps
+2021-12-28 06:02:00 -0500 12.06mbps, 2.85mbps
+2021-12-28 06:02:30 -0500 12.97mbps, 2.84mbps
+2021-12-28 06:02:59 -0500 14.60mbps, 2.86mbps
+2021-12-28 06:03:27 -0500 11.78mbps, 2.84mbps
+```
 
 Use --help to see the full list of arguments
 
-$ pspeedtest --debug
+	$ pspeedtest --debug
 
 ```ruby
 usage: [OPTION=VALUE]...
