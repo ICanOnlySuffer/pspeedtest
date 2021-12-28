@@ -48,7 +48,7 @@ private
 			Speed.new (threads.sum &:value) * 8, Time.now - start
 		end
 		
-		def upload_speed sizes = [400_000] * 8, debug: false
+		def upload_speed sizes = [400_000] * 8, debug: ""
 			url = "http://#{host}/speedtest/upload.php"
 			
 			threads = sizes.map {|size|
@@ -67,7 +67,7 @@ private
 			Speed.new (threads.sum &:value) * 8, Time.now - start
 		end
 		
-		def self.fetch buffer_size: 10
+		def self.fetch
 			(
 				HTTParty.get "https://speedtest.net/speedtest-servers.php"
 			) ["settings"]["servers"]["server"].map {|data|
@@ -77,16 +77,26 @@ private
 					data ["host"],
 					data ["sponsor"]
 				]
-			} [0, buffer_size] rescue [] # connection error
+			} rescue [] # connection error
 		end
 		
 		def self.nearby
 			self.fetch.sort_by &:distance
 		end
 		
-		def self.best buffer_size: 10
-			self.nearby[0, buffer_size].sort_by {|server|
-				server.latency = server.ping
+		def self.best buffer_size: 32
+			#self.nearby[0, buffer_size].sort_by {|server|
+			#	server.latency = server.ping
+			#}.first || Server.new
+			(
+				self.nearby[..buffer_size].map {|server|
+					Thread.new {
+						server.latency = server.ping
+						server
+					}
+				}.map &:value
+			).sort_by {|server|
+				server.latency
 			}.first || Server.new
 		end
 	end
