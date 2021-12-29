@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 		Thanks a lot for downloading pspeedtest!
 		
 		Bug reports, suggestions and contributions at:
-		  https://github.com/ICanOnlySuffer/pspeedtest
+		> https://github.com/ICanOnlySuffer/pspeedtest
 		
 	TXT
 	
