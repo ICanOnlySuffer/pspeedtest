@@ -2,15 +2,13 @@
 
 RSpec.describe PSpeedTest do
 	
-	# it "Should update USER" do
-	# 	PochaSpeedTest::USER.update!
-	# 	
-	# 	
-	# end
+	it "Should run" do
+		PSpeedTest.new.run
+	end
 	
 	
 	# it "has a version number" do
-	# 	expect(PochaSpeedTest::VERSION).not_to be nil
+	# 	expect(PSpeedTest::VERSION).not_to be nil
 	# end
 	
 	# it "does something useful" do
