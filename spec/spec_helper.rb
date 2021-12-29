@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "pspeedtest"
+require "../lib/pspeedtest"
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure
