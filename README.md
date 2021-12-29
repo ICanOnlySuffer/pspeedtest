@@ -143,7 +143,8 @@ Still in development.
 
 	$ pspeedtest --debug="%{time} %{download.bps} %{upload.bps}\n" --runs=8
 
-```
+```ruby
+
 2021-12-28 06:00:15 -0500 17.34mbps, 2.85mbps
 2021-12-28 06:00:41 -0500 16.27mbps, 2.85mbps
 2021-12-28 06:01:07 -0500 15.07mbps, 2.84mbps
@@ -152,11 +153,12 @@ Still in development.
 2021-12-28 06:02:30 -0500 12.97mbps, 2.84mbps
 2021-12-28 06:02:59 -0500 14.60mbps, 2.86mbps
 2021-12-28 06:03:27 -0500 11.78mbps, 2.84mbps
+
 ```
 
 Use --help to see the full list of arguments
 
-	$ pspeedtest --debug
+	$ pspeedtest --help
 
 ```ruby
 usage: [OPTION=VALUE]...
