@@ -1,7 +1,13 @@
+require_relative 'speed'
+require_relative 'user'
 
-class PSpeedTest
-private
+module PSpeedTest
 	Server = Struct.new :lat, :lon, :host, :sponsor, :latency do
+		URL_DOWNLOAD = 'http://%s/speedtest/random%ix%i.jpg'
+		URL_UPLOAD = 'http://%s/speedtest/upload.php'
+		URL_FETCH ='https://speedtest.net/speedtest-servers.php'
+		URL_PING = 'http://%s/speedtest/latency.txt'
+		
 		def distance lat = USER.lat, lon = USER.lon
 			a = (
 				(Math.sin ((lat - self.lat) * Math::PI / 360)) ** 2 +
@@ -14,26 +20,27 @@ private
 		
 		def to_s debug: ""
 			debug % {
-				lat: lat,
-				lon: lon,
-				host: host,
-				sponsor: sponsor,
-				latency: latency,
 				distance: distance,
+				latency: latency,
+				sponsor: sponsor,
+				host: host,
+				lat: lat,
+				lon: lon
 			}
 		end
 		
 		def ping
 			(
 				start = Time.now
-				HTTParty.get "http://#{host}/speedtest/latency.txt"
+				HTTParty.get URL_PING % host
 				(Time.now - start) * 100
 			) rescue Float::INFINITY
 		end
 		
-		def download_speed sizes = [1_000] * 8, debug: ""
+		def test_download sizes, debug: ""
 			threads = sizes.map {|size|
-				url = "http://#{host}/speedtest/random#{size}x#{size}.jpg"
+				url = URL_DOWNLOAD % [host, size, size]
+				
 				debug_string = debug % {
 					url: url
 				}
@@ -48,8 +55,8 @@ private
 			Speed.new (threads.sum &:value) * 8, Time.now - start
 		end
 		
-		def upload_speed sizes = [400_000] * 8, debug: ""
-			url = "http://#{host}/speedtest/upload.php"
+		def test_upload sizes, debug: ""
+			url = UPLOAD_URL % host
 			
 			threads = sizes.map {|size|
 				debug_string = debug % {
@@ -69,44 +76,42 @@ private
 		
 		def self.fetch
 			(
-				HTTParty.get "https://speedtest.net/speedtest-servers.php"
-			) ["settings"]["servers"]["server"].map {|data|
+				HTTParty.get URL_FETCH
+			) ['settings']['servers']['server'].map {|data|
 				Server.new *[
-					data ["lat"].to_f,
-					data ["lon"].to_f,
-					data ["host"],
-					data ["sponsor"]
+					data ['lat'].to_f,
+					data ['lon'].to_f,
+					data ['host'],
+					data ['sponsor']
 				]
-			} rescue [] # connection error
+			}
 		end
 		
-		def self.nearby
-			self.fetch.sort_by &:distance
-		end
-		
-		def self.best buffer_size: 32
-			#self.nearby[0, buffer_size].sort_by {|server|
-			#	server.latency = server.ping
-			#}.first || Server.new
-			(
-				self.nearby[..buffer_size].map {|server|
-					Thread.new {
-						server.latency = server.ping
-						server
-					}
-				}.map &:value
-			).sort_by {|server|
-				server.latency
-			}.first || Server.new
+		def self.get_bests
+			bests = []
+			
+			threads = self.fetch.map {|server|
+				Thread.new {
+					(
+						start = Time.now
+						HTTParty.get URL_PING % server.host
+						server.latency = (Time.now - start) * 100
+						bests << server
+						threads.each &:kill
+					) rescue nil
+				}
+			}
+			threads.each &:join
+			
+			bests.sort_by &:latency
 		end
 	end
 	
-public
 	SERVER = Server.new
 	
 	def SERVER.update! buffer_size: 10
 		(
-			Server.best buffer_size: buffer_size
+			Server.get_bests.first || Hash.new
 		).each_pair {|name, value|
 			SERVER[name] = value
 		}
