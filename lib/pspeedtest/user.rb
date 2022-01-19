@@ -1,29 +1,15 @@
+require 'httparty'
 
-class PSpeedTest
-private
-	User = Struct.new :ip, :lat, :lon do
-		def to_s debug: ""
-			debug % {
-				ip: ip,
-				lat: lat,
-				lon: lon
-			}
-		end
-	end
-
-public
-	USER = User.new
+module PSpeedTest
+	URL_USER = 'http://www.speedtest.net/speedtest-config.php'
+	USER = (Struct.new :ip, :lat, :lon).new
 	
 	def USER.update!
-		data = (
-			HTTParty.get <<~URL.chomp
-				http://www.speedtest.net/speedtest-config.php
-			URL
-		) ["settings"]["client"]
+		data = (HTTParty.get URL_USER) ['settings']['client']
 		
-		USER.ip  = data ["ip"]
-		USER.lat = data ["lat"].to_f
-		USER.lon = data ["lon"].to_f
+		USER.ip  = data ['ip']
+		USER.lat = data ['lat'].to_f
+		USER.lon = data ['lon'].to_f
 		
 		USER
 	end
