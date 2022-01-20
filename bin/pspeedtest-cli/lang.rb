@@ -1,14 +1,9 @@
 
-LANG = ENV["LANG"].to_s
+LANG = ENV["LANG"]
 
 class Hash
-	def in_lang
-		(
-			value = self [LANG] or value = self [LANG[..1]]
-		) ? value : self ["en"]
+	def translate
+		self[LANG] || self[LANG[..1]] || self['en']
 	end
 end
-
-
-
 
