@@ -12,18 +12,6 @@ whose inspiration was [fopina's pyspeedtest](
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'pspeedtest'
-```
-
-And then execute:
-
-	$ bundle install
-
-Or install it yourself as:
-
 	$ gem install pspeedtest
 
 ## Usage
@@ -82,20 +70,6 @@ See more at:
 * [https://www.rubydoc.info/gems/pspeedtest](
 	https://www.rubydoc.info/gems/pspeedtest)
 
-## Development
-
-Run tests:
-
-	$ rake spec
-
-Install into local machine:
-
-	$ bundle exec rake install
-
-Release a new version:
-
-	$ bundle exec rake release
-
 ## Contributing
 
 Bug reports, suggestions and pull requests are welcome!
@@ -120,8 +94,4 @@ lacostej's speedtest.rb:
 fopina's pyspeedtest:
 - [https://github.com/fopina/pyspeedtest](
 	https://github.com/fopina/pyspeedtest)
-
-
-
-
 
