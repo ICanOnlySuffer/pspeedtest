@@ -18,26 +18,7 @@ module PSpeedTest
 			12742 * (Math.atan2 (Math.sqrt (a)), (Math.sqrt (1 - a)))
 		end
 		
-		def to_s debug: ""
-			debug % {
-				distance: distance,
-				latency: latency,
-				sponsor: sponsor,
-				host: host,
-				lat: lat,
-				lon: lon
-			}
-		end
-		
-		def ping
-			(
-				start = Time.now
-				HTTParty.get URL_PING % host
-				(Time.now - start) * 100
-			) rescue Float::INFINITY
-		end
-		
-		def test_download sizes, debug: ""
+		def download sizes, debug: ""
 			threads = sizes.map {|size|
 				url = URL_DOWNLOAD % [host, size, size]
 				
@@ -55,13 +36,13 @@ module PSpeedTest
 			Speed.new (threads.sum &:value) * 8, Time.now - start
 		end
 		
-		def test_upload sizes, debug: ""
-			url = UPLOAD_URL % host
+		def upload sizes, debug: ""
+			url = URL_UPLOAD % host
 			
 			threads = sizes.map {|size|
 				debug_string = debug % {
 					url: url,
-					bytes: size.bytes
+					size: size
 				}
 				
 				Thread.new {
@@ -87,32 +68,29 @@ module PSpeedTest
 			}
 		end
 		
-		def self.get_bests
-			bests = []
-			
+		def self.get_best
+			best = Hash.new
 			threads = self.fetch.map {|server|
-				Thread.new {
+				thread = Thread.new {
 					(
 						start = Time.now
 						HTTParty.get URL_PING % server.host
 						server.latency = (Time.now - start) * 100
-						bests << server
-						threads.each &:kill
+						best = server
+						(threads - [thread]).each &:kill
 					) rescue nil
 				}
 			}
 			threads.each &:join
 			
-			bests.sort_by &:latency
+			best
 		end
 	end
 	
 	SERVER = Server.new
 	
 	def SERVER.update! buffer_size: 10
-		(
-			Server.get_bests.first || Hash.new
-		).each_pair {|name, value|
+		Server.get_best.each_pair {|name, value|
 			SERVER[name] = value
 		}
 		
