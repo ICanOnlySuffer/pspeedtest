@@ -1,100 +1,87 @@
 #!/usr/bin/env ruby
-require_relative "../lib/pspeedtest"
-require_relative "pspeedtest-cli/lang"
-require_relative "pspeedtest-cli/help"
-require_relative "pspeedtest-cli/version"
 
-=begin
-TODO:
-- A better debug system
-  - Add more options for formating
-  - Make it easier to read
-=end
+require_relative '../lib/pspeedtest'
+require_relative '../lib/pspeedtest/cli/version'
+require_relative '../lib/pspeedtest/cli/help'
 
 CLI = {
-	runs: 1.times,
-	file: nil,
+	download: [],
+	upload: [],
+	rescue: true,
 	debug: "",
-	delay: 10,
-	print_errors: false
+	delay: 0,
+	runs: 1.times
 }
 
-cli = PSpeedTest.new do |test|
-	begin
-		PSpeedTest::SERVER.update!
-		
-		time = Time.now
-		download = PSpeedTest::SERVER.download_speed test.to_download
-		upload = PSpeedTest::SERVER.upload_speed test.to_upload
-		
-		debug = CLI[:debug] % {
-			"server.host": PSpeedTest::SERVER.host,
-			"server.sponsor": PSpeedTest::SERVER.sponsor,
-			"server.latency": PSpeedTest::SERVER.latency,
-			"server.latitude": PSpeedTest::SERVER.lat,
-			"server.longitude": PSpeedTest::SERVER.lon,
-			"server.distance.km": PSpeedTest::SERVER.distance,
-			"server.distance.mi": PSpeedTest::SERVER.distance * 0.62137119,
-			"download.bits": download.bits,
-			"download.time": download.time,
-			"download.bps": download.bps,
-			"upload.bits": upload.bits,
-			"upload.time": upload.time,
-			"upload.bps": upload.bps,
-			"time.to_i": time.to_i,
-			"time.to_s": time.to_s,
-			"time.hms": (time.strftime "%H:%M:%S")
-		}
-		
-		if CLI[:file] then
-			File.write CLI[:file], debug, mode: ?a
-		else
-			print debug
-		end
-	rescue => error
-		puts "#{error.class}: #{error.class}" if CLI[:print_errors]
-	end
-	
-	sleep CLI[:delay]
-end
-
 ARGV.each do |arg|
-	key, value = arg.split ?=
+	option, value = arg.split '=', 2
 	
-	case key
-	when "-h", "--help"
-		puts HELP[value] || HELP.values.join
-		exit 0
-	when "-v", "--version"
-		puts VERSION
-		exit 0
-	when "--download"
-		cli.to_download = value == "nil" ? [] : (split '?').map {Integer _1}
-	when "--upload"
-		cli.to_upload = value == "nil" ? [] : (split '?').map {Integer _1}
-	when "--debug"
-		CLI[:debug] = value.gsub /\\./, {
-			'\n' => ?\n,
-			'\t' => ?\t,
-			'\e' => ?\e,
-			'\\' => ?\\
-		}
-	when "--delay"
-		CLI[:delay] = value.to_i
-	when "--runs"
-		CLI[:runs] = (value == "infinity") ? loop : value.to_i.times
-	when "--file"
-		CLI[:file] = value
-	when "--print-errors"
-		CLI[:print_errors] = value == "true"
-	else
-		puts HELP.values.join
-		exit 1
+	case option
+	when '--help', '-h' then help value
+	when '--version', '-v' then version
+	when '--download' then CLI[:download] = value.split.map &:to_i
+	when '--upload' then CLI[:upload] = value.split.map &:to_i
+	when '--rescue' then CLI[:rescue] = value == 'true'
+	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
+	when '--delay' then CLI[:delay] = value.to_i
+	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
+	when '--file' then $stdout = File.new value, 'a'
+	else help nil
 	end
 end
 
+$stdout.sync = true
 PSpeedTest::USER.update!
-cli.run CLI[:runs]
+
+def test
+	PSpeedTest::SERVER.update!
+	distance = PSpeedTest::SERVER.distance
+	time = Time.now
+	
+	download = PSpeedTest::SERVER.download CLI[:download]
+	upload = PSpeedTest::SERVER.upload CLI[:upload]
+	
+	print CLI[:debug] % {
+		'host': PSpeedTest::SERVER.host,
+		'sponsor': PSpeedTest::SERVER.sponsor,
+		'latency': PSpeedTest::SERVER.latency,
+		'latitude': PSpeedTest::SERVER.lat,
+		'longitude': PSpeedTest::SERVER.lon,
+		
+		'distance': distance,
+		'distance.m': distance * 1000,
+		'distance.mi': distance * 0.62137119,
+		
+		'download.num': download.bps.first,
+		'download.str': download.bps.last,
+		'download.bits': download.bits,
+		'download.time': download.time,
+		
+		'upload.num': upload.bps.first,
+		'upload.str': upload.bps.last,
+		'upload.bits': upload.bits,
+		'upload.time': upload.time,
+		
+		'time.to_i': time.to_i,
+		'time.hms': (time.strftime "%H:%M:%S"),
+		'time': time
+	}
+end
+
+looped = false
+CLI[:runs].each do
+	begin
+		test
+	rescue => error
+		raise error unless CLI[:rescue]
+	end
+	
+	if looped
+		sleep CLI[:delay]
+	else
+		looped = true
+	end
+end
 
 
 
