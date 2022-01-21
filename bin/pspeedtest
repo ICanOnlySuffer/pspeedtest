@@ -24,8 +24,9 @@ ARGV.each do |arg|
 	when '--rescue' then CLI[:rescue] = value == 'true'
 	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
 	when '--delay' then CLI[:delay] = value.to_i
-	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
 	when '--file' then $stdout = File.new value, 'a'
+	when '--runs'
+		CLI[:runs] = value == 'inf' ? loop : value.to_i.times
 	else help nil
 	end
 end
