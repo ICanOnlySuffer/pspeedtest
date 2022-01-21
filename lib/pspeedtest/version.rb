@@ -1,6 +1,6 @@
 
 module PSpeedTest
-	VERSION = "1.3.0"
+	VERSION = '2.0.0'
 end
 
 
