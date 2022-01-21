@@ -19,7 +19,11 @@ VERSION = {
 
 def version
 	puts "pspeedtest v#{PSpeedTest::VERSION} - Piero Rojas"
-	puts VERSION
+	puts VERSION % {
+		'petemyron': 'https://github.com/petemyron/speedtest/',
+		'lacostej': 'https://github.com/lacostej/speedtest.rb'
+	}
+	exit 0
 end
 
 

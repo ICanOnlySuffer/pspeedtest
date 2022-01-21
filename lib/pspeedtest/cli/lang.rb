@@ -1,5 +1,5 @@
 
-LANG = ENV["LANG"]
+LANG = ENV['LANG']
 
 class Hash
 	def translate
