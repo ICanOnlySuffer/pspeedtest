@@ -43,7 +43,7 @@ puts <<~TXT
 	#{OPTIONS}:
 	  --download=ARRAY  #{DOWNLOAD}.
 	                    #{ALLOWED}:
-	                      500 1000 1500 2000 2500 3000 3500 4000
+	                      500 750 1000 1500 2000 2500 3000 3500 4000
 	                    #{EXAMPLE}:
 	                      --download='500 1500 2500 3500'
 	  --upload=ARRAY    #{UPLOAD}.
@@ -86,7 +86,7 @@ puts <<~TXT
 	                    #{EXAMPLE}:
 	                      --file='~/Documents/internet.log'
 	#{EXAMPLE}:
-	  $ pspeedtest \\
+	  pspeedtest \\
 	    --download='4000 4000 4000 4000' \\
 	    --debug='%{time}: %<download.num>.4f %{download.str}\\n' \\
 	    --file='internet.log' \\
