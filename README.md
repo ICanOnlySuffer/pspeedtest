@@ -31,13 +31,11 @@ PSpeedTest::SERVER.update!
 
 # make a custom test
 def test
-	download_speed = PSpeedTest::SERVER.download [4000] * 4,
-		debug: 'downloading %{url}'
-	upload_speed = PSpeedTest::SERVER.upload [8000] * 8,
-		debug: 'uploading %{size} bytes to %{url}'
+	download = PSpeedTest::SERVER.download [4000] * 4
+	upload = PSpeedTest::SERVER.upload [8000] * 8
 	
-	puts "download speed: #{download_speed}"
-	puts "upload speed: #{upload_speed}"
+	puts "download speed: %.4f %s" % download.bps
+	puts "upload speed: %.4f %s" % upload.bps
 end
 
 # run it!
