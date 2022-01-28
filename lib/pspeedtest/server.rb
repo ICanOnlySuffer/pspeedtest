@@ -54,7 +54,7 @@ module PSpeedTest
 					data ['host'],
 					data ['sponsor']
 				)
-			}
+			} rescue []
 		end
 		
 		def self.get_best
