@@ -4,10 +4,10 @@ module PSpeedTest
 		def bps
 			div = bits.fdiv time
 			{
-				'bps'  => 1024,
-				'Kbps' => 1048576,
-				'Mbps' => 1073741824,
-				'Gbps' => 1099511627776
+				'bps'  => 1_024,
+				'Kbps' => 1_048_576,
+				'Mbps' => 1_073_741_824,
+				'Gbps' => 1_099_511_627_776
 			}.each {|string, max|
 				return [div * 1024 / max, string] if max > div
 			}
