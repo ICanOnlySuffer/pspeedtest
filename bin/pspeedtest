@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'pspeedtest/cli/help' if ARGV.empty?
+
 CLI = {
 	download: [],
 	upload: [],
-	rescue: true,
 	debug: "",
 	delay: 0,
 	runs: 1.times
@@ -16,23 +17,23 @@ ARGV.each do |arg|
 	when '--version' then require 'pspeedtest/cli/version'
 	when '--download' then CLI[:download] = value.split.map &:to_i
 	when '--upload' then CLI[:upload] = value.split.map &:to_i
-	when '--rescue' then CLI[:rescue] = value == 'true'
 	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
 	when '--delay' then CLI[:delay] = value.to_i
 	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
-	when '--file' then $stdout = File.new value, 'a'
+	when '--file' then
+		$stdout = File.new value, 'a'
+		$stdout.sync = true
 	else require 'pspeedtest/cli/help'
 	end
 end
 
 require 'pspeedtest'
 
-$stdout.sync = true
 PSpeedTest::USER.update!
 
 TOTAL = {
-	download: (Speed.new 0, 0),
-	upload: (Speed.new 0, 0)
+	download: (PSpeedTest::Speed.new 0, 0),
+	upload: (PSpeedTest::Speed.new 0, 0)
 }
 
 CLI[:runs].each do
