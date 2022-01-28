@@ -48,8 +48,8 @@ test
 
 	$ pspeedtest \
 		--download='4000 4000 4000 4000' \
-		--debug='%{time}: %<download.num>.4f %{download.str}\n'
-		--file='internet.txt' \
+		--debug='%{time}: %<download.num>.4f %{download.str}\n' \
+		--file='internet.log' \
 		--runs=5
 
 *internet.txt:*
