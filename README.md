@@ -52,7 +52,7 @@ test
 		--file='internet.log' \
 		--runs=5
 
-*internet.txt:*
+*internet.log:*
 
 ```
 2022-01-20 21:44:40 -0500: 771.3027 Kbps
