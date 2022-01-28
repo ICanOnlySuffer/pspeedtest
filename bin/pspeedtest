@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/pspeedtest'
-require_relative '../lib/pspeedtest/cli/version'
-require_relative '../lib/pspeedtest/cli/help'
-
 CLI = {
 	download: [],
 	upload: [],
@@ -17,30 +13,40 @@ ARGV.each do |arg|
 	option, value = arg.split '=', 2
 	
 	case option
-	when '--help', '-h' then help value
-	when '--version', '-v' then version
+	when '--version' then require 'pspeedtest/cli/version'
 	when '--download' then CLI[:download] = value.split.map &:to_i
 	when '--upload' then CLI[:upload] = value.split.map &:to_i
 	when '--rescue' then CLI[:rescue] = value == 'true'
 	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
 	when '--delay' then CLI[:delay] = value.to_i
+	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
 	when '--file' then $stdout = File.new value, 'a'
-	when '--runs'
-		CLI[:runs] = value == 'inf' ? loop : value.to_i.times
-	else help nil
+	else require 'pspeedtest/cli/help'
 	end
 end
+
+require 'pspeedtest'
 
 $stdout.sync = true
 PSpeedTest::USER.update!
 
-def test
+TOTAL = {
+	download: (Speed.new 0, 0),
+	upload: (Speed.new 0, 0)
+}
+
+CLI[:runs].each do
 	PSpeedTest::SERVER.update!
 	distance = PSpeedTest::SERVER.distance
 	time = Time.now
 	
 	download = PSpeedTest::SERVER.download CLI[:download]
 	upload = PSpeedTest::SERVER.upload CLI[:upload]
+	
+	TOTAL[:download].bits += download.bits
+	TOTAL[:download].time += download.time
+	TOTAL[:upload].bits += upload.bits
+	TOTAL[:upload].time += upload.time
 	
 	print CLI[:debug] % {
 		'host': PSpeedTest::SERVER.host,
@@ -53,6 +59,16 @@ def test
 		'distance.m': distance * 1000,
 		'distance.mi': distance * 0.62137119,
 		
+		'total.download.num': TOTAL[:download].bps.first,
+		'total.download.str': TOTAL[:download].bps.last,
+		'total.download.bits': TOTAL[:download].bits,
+		'total.download.time': TOTAL[:download].time,
+		
+		'total.upload.num': TOTAL[:upload].bps.first,
+		'total.upload.str': TOTAL[:upload].bps.last,
+		'total.upload.bits': TOTAL[:upload].bits,
+		'total.upload.time': TOTAL[:upload].time,
+		
 		'download.num': download.bps.first,
 		'download.str': download.bps.last,
 		'download.bits': download.bits,
@@ -63,34 +79,11 @@ def test
 		'upload.bits': upload.bits,
 		'upload.time': upload.time,
 		
-		'time.to_i': time.to_i,
+		'time.int': time.to_i,
 		'time.hms': (time.strftime "%H:%M:%S"),
 		'time': time
 	}
-end
-
-looped = false
-CLI[:runs].each do
-	begin
-		test
-	rescue => error
-		raise error unless CLI[:rescue]
-	end
 	
-	if looped
-		sleep CLI[:delay]
-	else
-		looped = true
-	end
+	sleep CLI[:delay]
 end
-
-
-
-
-
-
-
-
-
-
 
