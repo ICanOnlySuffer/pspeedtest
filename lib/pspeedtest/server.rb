@@ -23,7 +23,7 @@ module PSpeedTest
 			threads = sizes.map {|size|
 				url = URL_DOWNLOAD % [host, size, size]
 				Thread.new do
-					(HTTParty.get url).length
+					(HTTParty.get url).length rescue 0
 				end
 			}
 			
@@ -36,7 +36,9 @@ module PSpeedTest
 			
 			threads = sizes.map {|size|
 				Thread.new do
-					(HTTParty.post url, body: ?A * size) [/\d+/].to_i
+					(
+						HTTParty.post url, body: ?A * size
+					) [/\d+/].to_i rescue 0
 				end
 			}
 			
