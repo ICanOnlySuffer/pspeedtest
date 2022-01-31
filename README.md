@@ -21,10 +21,6 @@ whose inspiration was [fopina's pyspeedtest](
 ```ruby
 require 'pspeedtest'
 
-# update USER
-PSpeedTest::USER.update!
-=> #<struct ip, lat, lon>
-
 # update SERVER
 PSpeedTest::SERVER.update!
 => #<struct lat, lon, host, sponsor, latency>
