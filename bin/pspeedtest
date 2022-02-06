@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-require 'pspeedtest/cli/help' if ARGV.empty?
+require 'pspeedtest/help' if ARGV.empty?
 
 CLI = {
 	download: [],
 	upload: [],
-	debug: "",
+	debug: '',
 	delay: 0,
 	runs: 1.times
 }
@@ -14,20 +14,19 @@ ARGV.each do |arg|
 	option, value = arg.split '=', 2
 	
 	case option
-	when '--version' then require 'pspeedtest/cli/version'
+	when '--version' then require 'pspeedtest/version'
 	when '--download' then CLI[:download] = value.split.map &:to_i
 	when '--upload' then CLI[:upload] = value.split.map &:to_i
 	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
 	when '--delay' then CLI[:delay] = value.to_i
 	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
-	when '--file' then
-		$stdout = File.new value, 'a'
-		$stdout.sync = true
-	else require 'pspeedtest/cli/help'
+	when '--file' then $stdout = File.new value, 'a'
+	else require 'pspeedtest/help'
 	end
 end
 
 require 'pspeedtest'
+$stdout.sync = true
 
 TOTAL = {
 	download: (PSpeedTest::Speed.new 0, 0),
@@ -75,13 +74,15 @@ CLI[:runs].each do
 		'upload.bits': upload.bits,
 		'upload.time': upload.time,
 		
+		'time.ymd.hms': (time.strftime '%F %X'),
+		'time.hms': (time.strftime '%X'),
 		'time.int': time.to_i,
-		'time.hms': (time.strftime "%H:%M:%S"),
 		'time': time
 	}
 rescue => error
-	$stderr.print "\e[31m", error.message, "\e[0m\n"
+	$stderr.puts "\e[31m#{error.message}\e[0m"
 rescue Interrupt
+	$stderr.puts
 	exit
 end
 
