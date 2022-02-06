@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
-require_relative 'lib/pspeedtest/version'
+require_relative 'lib/pspeedtest'
 
 Gem::Specification.new do |spec|
 	spec.name    = 'pspeedtest'
-	spec.version = PSpeedTest::VERSION
 	spec.authors = ['ICanOnlySuffer']
+	spec.version = PSpeedTest::VERSION
 	
 	spec.summary     = 'Test internet with speedtest.net servers'
 	spec.description = 'Test internet with speedtest.net servers'
