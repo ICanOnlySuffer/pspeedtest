@@ -1,15 +1,25 @@
 require 'net/http'
 
 module PSpeedTest
-	VERSION = '2.3.0'
-	
 	Speed = Struct.new :bits, :time do
-		def bps
-			case div = (bits.fdiv time)
-			when ...1_024 then [div, 'bps']
-			when ...1_048_576 then [div / 1024, 'Kbps']
-			when ...1_073_741_824 then [div / 1_048_576, 'Mbps']
-			else [div / 1_073_741_824, 'Gbps']
+		def initialize bits, time
+			self.bits = bits || 0
+			self.time = time || 0
+		end
+		def to_s
+			case (bits.fdiv time)
+			when ...1_024 then 'bps'
+			when ...1_048_576 then 'Kbps'
+			when ...1_073_741_824 then 'Mbps'
+			else 'Gbps'
+			end
+		end
+		def to_f
+			(div = bits.fdiv time) / case div
+			when ...1_024 then 1
+			when ...1_048_576 then 1024
+			when ...1_073_741_824 then 1_048_576
+			else 1_073_741_824
 			end
 		end
 	end

@@ -23,15 +23,14 @@ require 'pspeedtest'
 
 # update SERVER
 PSpeedTest::SERVER.update!
-=> #<struct lat, lon, host, sponsor, latency>
 
 # make a custom test
 def test
 	download = PSpeedTest::SERVER.download [4000] * 4
 	upload = PSpeedTest::SERVER.upload [8000] * 8
 	
-	puts "download speed: %.4f %s" % download.bps
-	puts "upload speed: %.4f %s" % upload.bps
+	puts "download speed: %.4f %s" % download
+	puts "upload speed: %.4f %s" % upload
 end
 
 # run it!
@@ -40,20 +39,17 @@ test
 
 **On the command line:**
 
-	$ pspeedtest \
-		--download='4000 4000 4000 4000' \
-		--debug='%{time}: %<download.num>.4f %{download.str}\n' \
-		--file='internet.log' \
-		--runs=5
+	$ pspeedtest -d'4000 4000' -r5 \
+	    -f'%F %X : %<download>.4f %{download}\n' > internet.log
 
 *internet.log:*
 
 ```
-2022-01-20 21:44:40 -0500: 771.3027 Kbps
-2022-01-20 21:44:47 -0500: 1.0936 Mbps
-2022-01-20 21:44:53 -0500: 475.1595 Kbps
-2022-01-20 21:45:03 -0500: 877.3065 Kbps
-2022-01-20 21:45:12 -0500: 231.7904 Kbps
+2022-02-12 19:48:35 : 11.4803 Mbps
+2022-02-12 19:49:18 : 15.8619 Mbps
+2022-02-12 19:49:49 : 10.5070 Mbps
+2022-02-12 19:50:36 : 16.1115 Mbps
+2022-02-12 19:51:07 : 11.7380 Mbps
 ```
 
 Use --help to see the full list of arguments

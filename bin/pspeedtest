@@ -1,83 +1,91 @@
 #!/usr/bin/env ruby
 
-require 'pspeedtest/help' if ARGV.empty?
+require 'pspeedtest/help'
+require 'pspeedtest/info'
+require 'pspeedtest'
+require 'optparse'
+include PSpeedTest
 
 CLI = {
-	download: [],
-	upload: [],
-	debug: '',
-	delay: 0,
+	to_download: [],
+	to_upload: [],
+	format: '',
+	sleep: 0,
 	runs: 1.times
 }
 
-ARGV.each do |arg|
-	option, value = arg.split '=', 2
-	
-	case option
-	when '--version' then require 'pspeedtest/version'
-	when '--download' then CLI[:download] = value.split.map &:to_i
-	when '--upload' then CLI[:upload] = value.split.map &:to_i
-	when '--debug' then CLI[:debug] = value.gsub '\n', ?\n
-	when '--delay' then CLI[:delay] = value.to_i
-	when '--runs' then CLI[:runs] = value ? value.to_i.times : loop
-	when '--file' then $stdout = File.new value, 'a'
-	else require 'pspeedtest/help'
-	end
-end
-
-require 'pspeedtest'
 $stdout.sync = true
 
-TOTAL = {
-	download: (PSpeedTest::Speed.new 0, 0),
-	upload: (PSpeedTest::Speed.new 0, 0)
-}
+OptionParser.new USAGE, 20, '  ' do |opts|
+	opts.on '-dARRAY', '--download=ARRAY', LANG[:download] do |array|
+		CLI[:to_download] = array.split.map &:to_i
+	end
+	opts.on '-uARRAY', '--upload=ARRAY', LANG[:upload] do |array|
+		CLI[:to_upload] = array.split.map &:to_i
+	end
+	opts.on '-fSTRING', '--format=STRING', LANG[:format] do |string|
+		CLI[:format] = string.gsub '\n', ?\n
+	end
+	opts.on '-sTIME', '--sleep=TIME', LANG[:sleep] do |time|
+		CLI[:sleep] = time.to_i
+	end
+	opts.on '-r[RUNS]', '--runs[=RUNS]', LANG[:runs] do |runs|
+		CLI[:runs] = runs ? runs.to_i.times : loop
+	end
+	opts.on '-h[OPTION]', '--help[=OPTION]', LANG[:help] do |option|
+		if option
+			example, allowed = HELP[option.to_sym]
+			puts "#{LANG[:allowed]}:\n  #{allowed}" if allowed
+			puts "#{LANG[:example]}:\n  --#{option}=#{example}"
+		else
+			puts opts
+		end
+		exit
+	end
+	opts.on '-v', '--version', LANG[:version] do
+		puts <<~TXT
+			pspeedtest v#{VERSION} - #{AUTHORS.values.join ', '}
+			* #{GITHOME}
+			#{LANG[:licence] % LICENSE}
+		TXT
+		exit
+	end
+end.parse!
+
+DOWNLOAD_SUM = Speed.new 0, 0
+UPLOAD_SUM = Speed.new 0, 0
 
 CLI[:runs].each do
-	sleep CLI[:delay]
+	sleep CLI[:sleep]
 	
-	PSpeedTest::SERVER.update!
+	SERVER.update!
 	time = Time.now
+	download = SERVER.download CLI[:to_download]
+	upload = SERVER.upload CLI[:to_upload]
 	
-	download = PSpeedTest::SERVER.download CLI[:download]
-	upload = PSpeedTest::SERVER.upload CLI[:upload]
+	DOWNLOAD_SUM.bits += download.bits
+	DOWNLOAD_SUM.time += download.time
+	UPLOAD_SUM.bits += upload.bits
+	UPLOAD_SUM.time += upload.time
 	
-	TOTAL[:download].bits += download.bits
-	TOTAL[:download].time += download.time
-	TOTAL[:upload].bits += upload.bits
-	TOTAL[:upload].time += upload.time
-	
-	print CLI[:debug] % {
-		'host': PSpeedTest::SERVER.host,
-		'sponsor': PSpeedTest::SERVER.sponsor,
-		'latency': PSpeedTest::SERVER.latency,
-		'latitude': PSpeedTest::SERVER.lat,
-		'longitude': PSpeedTest::SERVER.lon,
-		
-		'total.download.num': TOTAL[:download].bps.first,
-		'total.download.str': TOTAL[:download].bps.last,
-		'total.download.bits': TOTAL[:download].bits,
-		'total.download.time': TOTAL[:download].time,
-		
-		'total.upload.num': TOTAL[:upload].bps.first,
-		'total.upload.str': TOTAL[:upload].bps.last,
-		'total.upload.bits': TOTAL[:upload].bits,
-		'total.upload.time': TOTAL[:upload].time,
-		
-		'download.num': download.bps.first,
-		'download.str': download.bps.last,
+	print (time.strftime CLI[:format]) % {
+		'host': SERVER.host,
+		'sponsor': SERVER.sponsor,
+		'latency': SERVER.latency,
+		'latitude': SERVER.lat,
+		'longitude': SERVER.lon,
+		'download.sum': DOWNLOAD_SUM,
+		'download.bits.sum': DOWNLOAD_SUM.bits,
+		'download.time.sum': DOWNLOAD_SUM.time,
+		'upload.sum': UPLOAD_SUM,
+		'upload.bits.sum': UPLOAD_SUM.bits,
+		'upload.time.sum': UPLOAD_SUM.time,
+		'download': download,
 		'download.bits': download.bits,
 		'download.time': download.time,
-		
-		'upload.num': upload.bps.first,
-		'upload.str': upload.bps.last,
+		'upload': upload,
 		'upload.bits': upload.bits,
-		'upload.time': upload.time,
-		
-		'time.ymd.hms': (time.strftime '%F %X'),
-		'time.hms': (time.strftime '%X'),
-		'time.int': time.to_i,
-		'time': time
+		'upload.time': upload.time
 	}
 rescue => error
 	$stderr.puts "\e[31m#{error.message}\e[0m"
