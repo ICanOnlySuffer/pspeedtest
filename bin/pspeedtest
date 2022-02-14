@@ -32,22 +32,22 @@ OptionParser.new USAGE, 20, '  ' do |opts|
 	opts.on '-r[RUNS]', '--runs[=RUNS]', LANG[:runs] do |runs|
 		CLI[:runs] = runs ? runs.to_i.times : loop
 	end
+	opts.on '-v', '--version', LANG[:version] do
+		puts <<~TXT
+			pspeedtest v#{VERSION} - #{AUTHORS.values.join ', '}
+			> #{GITHOME}
+			#{LANG[:licence] % LICENSE}
+		TXT
+		exit
+	end
 	opts.on '-h[OPTION]', '--help[=OPTION]', LANG[:help] do |option|
 		if option
 			example, allowed = HELP[option.to_sym]
 			puts "#{LANG[:allowed]}:\n  #{allowed}" if allowed
 			puts "#{LANG[:example]}:\n  --#{option}=#{example}"
 		else
-			puts opts
+			puts opts, EXAMPLE
 		end
-		exit
-	end
-	opts.on '-v', '--version', LANG[:version] do
-		puts <<~TXT
-			pspeedtest v#{VERSION} - #{AUTHORS.values.join ', '}
-			* #{GITHOME}
-			#{LANG[:licence] % LICENSE}
-		TXT
 		exit
 	end
 end.parse!
