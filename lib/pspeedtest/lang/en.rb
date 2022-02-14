@@ -1,7 +1,7 @@
 
 LANG = {
 	usage: 'Usage',
-	value: 'OPTION=VALOR',
+	value: 'OPTION=VALUE',
 	options: 'Options',
 	allowed: 'Allowed values',
 	example: 'Example',
